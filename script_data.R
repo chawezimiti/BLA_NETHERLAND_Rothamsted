@@ -82,8 +82,14 @@ bolides(pH,Yield, model = "explore", pch=16, xlab="pH", ylab="yield")
 
 #write.csv(dat, "maize_data.csv", row.names = F)
 
+summastat(N)
+summastat(K)
+summastat(pH)
+summastat(Yield)
 
+maize <- read.csv("https://raw.githubusercontent.com/chawezimiti/BLA_NETHERLAND_Rothamsted/refs/heads/main/maize_data.csv")
 
+head(maize)
 
 
 
