@@ -25,7 +25,7 @@ When the censored bivariate normal model is used, the variables x and y should p
 
 ```{r, eval=FALSE}
 
-summastat(soil$P) # From results, P can not be assumed to be from a normal distribution and \# so we try a log transformation.
+summastat(soil$P) # From results, P can not be assumed to be from a normal distribution and so we try a log transformation.
 
 summastat(log(soil$P))# The log-transformed P can be assumed to be from a normal distribution
 ```
@@ -75,7 +75,7 @@ Exercise
 </button>
 
 ::: {#my-collapse .collapse .mt-3}
-1. Reduce the number of simulations and see the effect
+1.  Reduce the number of simulations and see the effect
 :::
 :::
 
@@ -149,10 +149,45 @@ Exercise 1
 </button>
 
 ::: {#my-collapse .collapse .mt-3}
-Give an exercise 3 here
+A link to dataset `cassava` that contains cassava yields and various soil properties is provided below. You can read it into your R session using the following code.
+
+```{r, eval=FALSE}
+cassava <- read.csv("https://raw.githubusercontent.com/chawezimiti/BLA_NETHERLAND_Rothamsted/refs/heads/main/cassava.csv")
+
+head(cassava)
+
+```
+
+1.  Fit the boundary line model for cassava yield and any soil property of your choice using the bolides function assigning it mod_1
 :::
+<!-- Unlock input + button -->
+
+::: mt-3
+<label for="keyInput">Enter key to view answer:</label> <input type="text" id="keyInput" class="form-control" placeholder="Enter keyword"> <button class="btn btn-success mt-2" onclick="checkKey()">Submit</button>
 :::
 
+<!-- Hidden answer section -->
+
+::: {#answerContent .collapse .mt-3}
+```{r, fig.align='center', fig.dim=c(4,4), eval=FALSE}
+code_here
+```
+
+<!-- Hide button -->
+
+<button class="btn btn-outline-secondary mt-2" onclick="hideAnswer()">
+
+Hide Answer
+
+</button>
+:::
+
+<!-- JavaScript -->
+
+```{=html}
+<script> function checkKey() { const input = document.getElementById('keyInput').value.trim().toLowerCase(); const answer = document.getElementById('answerContent'); if (input === 'model5') { answer.classList.add('show'); } else { alert('Incorrect key. Please try again.'); } } function hideAnswer() { const answer = document.getElementById('answerContent'); answer.classList.remove('show'); } </script>
+```
+:::
 
 ### 5.2 Binning method
 
@@ -193,8 +228,6 @@ model1 <- blbin(x=x,y=y, bins,start = start,model = "trapezium",
 model1
 ```
 
-The results show that the optimized parameters and plot. There is no uncertainty in the parameters because this is a heuristic method. These parameters can then be used to determine boundary line response for any given value of *`x`* using the `predictBL()` function.
-
 ::: card
 <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
 
@@ -203,11 +236,46 @@ Exercise 2
 </button>
 
 ::: {#my-collapse .collapse .mt-3}
-1.  Experiment with different sizes of `bins` and `tau` values
-2.  What is the effect on the output?
-3.  What would be the effect on analysis?
+A link to dataset `cassava` that contains cassava yields and various soil properties is provided below. You can read it into your R session using the following code.
+
+```{r, eval=FALSE}
+cassava <- read.csv("https://raw.githubusercontent.com/chawezimiti/BLA_NETHERLAND_Rothamsted/refs/heads/main/cassava.csv")
+
+head(cassava)
+
+```
+
+1.  Fit the boundary line model for cassava yield and any soil property of your choice using the bolides function assigning it mod_1
 :::
+<!-- Unlock input + button -->
+
+::: mt-3
+<label for="keyInput">Enter key to view answer:</label> <input type="text" id="keyInput" class="form-control" placeholder="Enter keyword"> <button class="btn btn-success mt-2" onclick="checkKey()">Submit</button>
 :::
+
+<!-- Hidden answer section -->
+
+::: {#answerContent .collapse .mt-3}
+```{r, fig.align='center', fig.dim=c(4,4), eval=FALSE}
+code_here
+```
+
+<!-- Hide button -->
+
+<button class="btn btn-outline-secondary mt-2" onclick="hideAnswer()">
+
+Hide Answer
+
+</button>
+:::
+
+<!-- JavaScript -->
+
+```{=html}
+<script> function checkKey() { const input = document.getElementById('keyInput').value.trim().toLowerCase(); const answer = document.getElementById('answerContent'); if (input === 'model5') { answer.classList.add('show'); } else { alert('Incorrect key. Please try again.'); } } function hideAnswer() { const answer = document.getElementById('answerContent'); answer.classList.remove('show'); } </script>
+```
+:::
+
 
 ### 5.3 Quantile regression method
 
@@ -252,10 +320,37 @@ Exercise 3
 </button>
 
 ::: {#my-collapse .collapse .mt-3}
-Give an exercise 2 here
+
+1.  Use the `cassava`  dataset to fit the boundary line model for cassava yield and any soil property of your choice using the blqr function assigning it mod_3
 :::
+<!-- Unlock input + button -->
+
+::: mt-3
+<label for="keyInput">Enter key to view answer:</label> <input type="text" id="keyInput" class="form-control" placeholder="Enter keyword"> <button class="btn btn-success mt-2" onclick="checkKey()">Submit</button>
 :::
 
+<!-- Hidden answer section -->
+
+::: {#answerContent .collapse .mt-3}
+```{r, fig.align='center', fig.dim=c(4,4), eval=FALSE}
+code_here
+```
+
+<!-- Hide button -->
+
+<button class="btn btn-outline-secondary mt-2" onclick="hideAnswer()">
+
+Hide Answer
+
+</button>
+:::
+
+<!-- JavaScript -->
+
+```{=html}
+<script> function checkKey() { const input = document.getElementById('keyInput').value.trim().toLowerCase(); const answer = document.getElementById('answerContent'); if (input === 'model5') { answer.classList.add('show'); } else { alert('Incorrect key. Please try again.'); } } function hideAnswer() { const answer = document.getElementById('answerContent'); answer.classList.remove('show'); } </script>
+```
+:::
 
 ### 5.4 Censored bivariate normal model
 
@@ -295,6 +390,7 @@ The standard deviation of measurement error (`sigh`) is a fixed parameter in the
 
 ```{r, eval = FALSE}
 sigh<-c(0.3,0.4,0.5,0.6,0.7,0.8,0.9,1) # we suggest sigh values ranging from 0.3 to 1 t/ha
+
 ```
 
 **Note**: This function will take a few minutes to run as it is evaluating each sigh value for each set of start values. We use the lapply function to loop over each sigh and start value set.
@@ -387,6 +483,7 @@ model_4 <- models[[which.min(unlist(lapply(X=models,FUN = function(a){
 Model_4
 ```
 
+
 ::: card
 <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
 
@@ -395,9 +492,40 @@ Exercise 5
 </button>
 
 ::: {#my-collapse .collapse .mt-3}
-1. Determine the boundary line for soil pH from the Soil dataset (within the BLA) and assign it Model_5. Use the `sigh = 0.6`. There is no need to test for presence of boundary as it has already been established earlier for Soil P
+
+1.  Determine the boundary line for soil pH from the `Soil` dataset (within the BLA) and assign it Model_5. Use the `sigh = 0.6`. There is no need to test for presence of boundary as it has already been established earlier using Soil P.
+
 :::
+<!-- Unlock input + button -->
+
+::: mt-3
+<label for="keyInput">Enter key to view answer:</label> <input type="text" id="keyInput" class="form-control" placeholder="Enter keyword"> <button class="btn btn-success mt-2" onclick="checkKey()">Submit</button>
 :::
+
+<!-- Hidden answer section -->
+
+::: {#answerContent .collapse .mt-3}
+```{r, fig.align='center', fig.dim=c(4,4), eval=FALSE}
+code_here
+```
+
+<!-- Hide button -->
+
+<button class="btn btn-outline-secondary mt-2" onclick="hideAnswer()">
+
+Hide Answer
+
+</button>
+:::
+
+<!-- JavaScript -->
+
+```{=html}
+<script> function checkKey() { const input = document.getElementById('keyInput').value.trim().toLowerCase(); const answer = document.getElementById('answerContent'); if (input === 'model5') { answer.classList.add('show'); } else { alert('Incorrect key. Please try again.'); } } function hideAnswer() { const answer = document.getElementById('answerContent'); answer.classList.remove('show'); } </script>
+```
+:::
+
+
 
 
 ## 6. Predicting boundary yield for each data point in our dataset
@@ -410,6 +538,7 @@ P_data <-log(soil$P) # extracting soil P from the data set
 P<-predictBL(model_1,P_data) # boundary yield for soil P
 ```
 
+
 ::: card
 <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
 
@@ -418,9 +547,42 @@ Exercise 6
 </button>
 
 ::: {#my-collapse .collapse .mt-3}
-1. Use the results from your model5 for soil pH to predict the largest yields for each value of soil pH. Replace the missing pH value with the mean.
+
+1.  Use the results from your model5 for soil pH to predict the largest yields for each value of soil pH. Replace the missing pH value with the mean.
 :::
+<!-- Unlock input + button -->
+
+::: mt-3
+<label for="keyInput">Enter key to view answer:</label> <input type="text" id="keyInput" class="form-control" placeholder="Enter keyword"> <button class="btn btn-success mt-2" onclick="checkKey()">Submit</button>
 :::
+
+<!-- Hidden answer section -->
+
+::: {#answerContent .collapse .mt-3}
+```{r, fig.align='center', fig.dim=c(4,4), eval=FALSE}
+code_here
+```
+
+<!-- Hide button -->
+
+<button class="btn btn-outline-secondary mt-2" onclick="hideAnswer()">
+
+Hide Answer
+
+</button>
+:::
+
+<!-- JavaScript -->
+
+```{=html}
+<script> function checkKey() { const input = document.getElementById('keyInput').value.trim().toLowerCase(); const answer = document.getElementById('answerContent'); if (input === 'model5') { answer.classList.add('show'); } else { alert('Incorrect key. Please try again.'); } } function hideAnswer() { const answer = document.getElementById('answerContent'); answer.classList.remove('show'); } </script>
+```
+:::
+
+
+
+
+
 
 ## 8. Posthoc Analysis
 
@@ -466,7 +628,6 @@ model4
 
 The parameters of the models are shown in the results. A prediction of the boundary response values for each value of *`x`* can the be done as previously shown using the `predictBL()` function.
 
-
 ::: card
 <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
 
@@ -475,16 +636,7 @@ Exercise 7
 </button>
 
 ::: {#my-collapse .collapse .mt-3}
-1. From the variables in data, choose one and fit the boundary line model using a custom model of your choice.
+1.  From the variables in data, choose one and fit the boundary line model using a custom model of your choice.
 :::
 :::
-
-
-
-
-
-
-
-
-
 
