@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Chawezi Miti">
 
-<title>BOUNDARY LINE ANALYSIS FOR YIELD GAP ANALYSIS</title>
+<title>Boundary Line Methodology For Yield Gap Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -108,13 +109,19 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">BOUNDARY LINE ANALYSIS FOR YIELD GAP ANALYSIS</h1>
+<h1 class="title">Boundary Line Methodology For Yield Gap Analysis</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Chawezi Miti </p>
+          </div>
+  </div>
     
   
     
@@ -125,74 +132,87 @@ window.Quarto = {
 </header>
 
 
+<section id="day-1-introduction-to-boundary-line-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="day-1-introduction-to-boundary-line-analysis">DAY 1: INTRODUCTION TO BOUNDARY LINE ANALYSIS</h2>
+</section>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">1. Introduction</h2>
+<p>This script gives illustration of fitting boundary line models to data and carrying out post-hoc analysis.</p>
 </section>
-<section id="load-libraries" class="level2">
-<h2 class="anchored" data-anchor-id="load-libraries">2. Load libraries</h2>
+<section id="install-and-load-libraries" class="level2">
+<h2 class="anchored" data-anchor-id="install-and-load-libraries">2. Install and Load libraries</h2>
+<section id="install-necessary-packages" class="level3">
+<h3 class="anchored" data-anchor-id="install-necessary-packages">2.1 Install necessary packages</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BLA) </span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aplpack)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"devtools"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("BLA")</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">install_github</span>(<span class="st">"chawezimiti/BLA"</span>) <span class="co"># install the development version of BLA from Github</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"aplpack"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="load-data" class="level2">
-<h2 class="anchored" data-anchor-id="load-data">3. Load data</h2>
+<section id="load-libraries-into-your-r-session" class="level3">
+<h3 class="anchored" data-anchor-id="load-libraries-into-your-r-session">2.2 Load libraries into your <code>R</code> session</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BLA) </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aplpack)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="boundary-line-analysis-task" class="level2">
+<h2 class="anchored" data-anchor-id="boundary-line-analysis-task">3. Boundary line analysis task</h2>
+<p>The <code>BLA</code> package contains an inbuilt dataset called <code>soil</code> that contains data on wheat yield, soil P and soil pH gathered from farms across the UK. The task for this practical is to:</p>
+<ol type="1">
+<li><p>Fit the boundary line model describing wheat yield as a function of soil Phosphorus and soil pH.</p></li>
+<li><p>Determine the most-limiting factor at each observation point.</p></li>
+</ol>
+<p>NB: A second dataset called <code>maize</code> is also provided via a github that contains Maize yields, soil pH, soil K and soil N gathered from Ethiopia. This will be used for follow up practice exercises.</p>
 </section>
 <section id="test-assumptions" class="level2">
 <h2 class="anchored" data-anchor-id="test-assumptions">4. Test Assumptions</h2>
-<section id="normality-check-for-the-soil-p" class="level3">
-<h3 class="anchored" data-anchor-id="normality-check-for-the-soil-p">4.1. Normality check for the soil P</h3>
-<p>When the censored bivariate normal model is used, the variables x and y should plausibly be drawn from an underlying bivariate normal distribution albeit with some censoring of the y variable. Here we check this assumption using the summastat() function.</p>
+<section id="normality-check" class="level3">
+<h3 class="anchored" data-anchor-id="normality-check">4.1. Normality check</h3>
+<p>In boundary line fitting, the independent and dependent variables should plausibly be drawn from an underlying bivariate normal distribution albeit with some censoring of the response variable. Here we check this assumption using the <code>summastat()</code> function. Lets start with the boundary line for yield as a function of soil P.</p>
 <section id="soil-p" class="level4">
 <h4 class="anchored" data-anchor-id="soil-p">4.1.1. Soil P</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summastat</span>(soil<span class="sc">$</span>P) <span class="co"># From results, P can not be assumed to be from a normal distribution and so we try a log transformation.</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summastat</span>(<span class="fu">log</span>(soil<span class="sc">$</span>P))<span class="co"># The log-transformed P can be assumed to be from a normal distribution</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summastat</span>(soil<span class="sc">$</span>P) <span class="co"># From results, P can not be assumed to be from a normal distribution and so we try a log transformation.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summastat</span>(<span class="fu">log</span>(soil<span class="sc">$</span>P))<span class="co"># The log-transformed P can be assumed to be from a normal distribution</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="wheat-yield" class="level4">
 <h4 class="anchored" data-anchor-id="wheat-yield">4.1.2 Wheat yield</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summastat</span>(soil<span class="sc">$</span>yield)<span class="co"># Wheat yield can be assumed to be from a normal distribution</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summastat</span>(soil<span class="sc">$</span>yield)<span class="co"># Wheat yield can be assumed to be from a normal distribution</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
-<section id="outlier-detection-using-bagplot-function" class="level3">
-<h3 class="anchored" data-anchor-id="outlier-detection-using-bagplot-function">4.2. Outlier detection using bagplot() function</h3>
-<p>The boundary line model is highly sensitive to outliers and for this reason, bivariate outliers are identified and removed from the data. This is achieved using the bagplot method. The <code>bag</code> plot is a bivariate equivalent of the univariate boxplot. It is composed of a <code>depth median</code>, <code>bag</code> and <code>loop</code>. The <code>depth median</code> describes the center of the data cloud and is equivalent to the median value in the univariate boxplot, the <code>bag</code> contains 50% of the data and the <code>loop</code> contains data outside the bag which are not outliers. Here we identify and remove outliers from the dataset using the <code>bagplot()</code> function from the <code>aplpack</code> package.</p>
+<section id="outlier-detection" class="level3">
+<h3 class="anchored" data-anchor-id="outlier-detection">4.2. Outlier detection</h3>
+<p>The boundary line model is highly sensitive to outliers and for this reason, bivariate outliers are identified and removed from the data. This is achieved using the bagplot. The <code>bag</code> plot is a bivariate equivalent of the univariate boxplot. It is composed of a <code>depth median</code>, <code>bag</code> and <code>loop</code>. The <code>depth median</code> describes the center of the data cloud and is equivalent to the median value in the univariate boxplot, the <code>bag</code> contains 50% of the data and the <code>loop</code> contains data outside the bag which are not outliers. Here we identify and remove outliers from the dataset using the <code>bagplot()</code> function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x=</span><span class="fu">log</span>(soil<span class="sc">$</span>P), <span class="at">y=</span>soil<span class="sc">$</span>yield) <span class="co">#Input for the bagplot() is a dataframe of x and y.</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">bagplot</span>(dat,<span class="at">show.whiskers =</span> F)<span class="co"># Figure 2 in article</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"bottomright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Bag"</span>,<span class="st">"Loop"</span>,<span class="st">"Depth median"</span>, <span class="st">"outlier"</span>), <span class="at">pch =</span> <span class="fu">c</span>(<span class="dv">15</span>,<span class="dv">15</span>,<span class="dv">8</span>,<span class="dv">3</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="fu">adjustcolor</span>( <span class="st">"#7799ff"</span>, <span class="at">alpha.f =</span> <span class="fl">0.7</span>), <span class="st">"#aaccff"</span>,<span class="st">"red"</span>,<span class="st">"red"</span>)) <span class="co">#adds legend </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x=</span><span class="fu">log</span>(soil<span class="sc">$</span>P), <span class="at">y=</span>soil<span class="sc">$</span>yield) <span class="co">#Input for the bagplot() is a dataframe of x and y.</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">bagplot</span>(dat,<span class="at">show.whiskers =</span> F)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"bottomright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Bag"</span>,<span class="st">"Loop"</span>,<span class="st">"Depth median"</span>, <span class="st">"outlier"</span>), <span class="at">pch =</span> <span class="fu">c</span>(<span class="dv">15</span>,<span class="dv">15</span>,<span class="dv">8</span>,<span class="dv">3</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="fu">adjustcolor</span>( <span class="st">"#7799ff"</span>, <span class="at">alpha.f =</span> <span class="fl">0.7</span>), <span class="st">"#aaccff"</span>,<span class="st">"red"</span>,<span class="st">"red"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Creating a new data set without bivariate outliers i.e points in the bag and loop only.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>vals <span class="ot">&lt;-</span> <span class="fu">rbind</span>(out<span class="sc">$</span>pxy.bag,out<span class="sc">$</span>pxy.outer)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(vals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>vals <span class="ot">&lt;-</span> <span class="fu">rbind</span>(out<span class="sc">$</span>pxy.bag,out<span class="sc">$</span>pxy.outer)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(vals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="testing-evidence-for-presence-of-boundary-in-dataset" class="level3">
 <h3 class="anchored" data-anchor-id="testing-evidence-for-presence-of-boundary-in-dataset">4.3. Testing evidence for presence of boundary in dataset</h3>
-<p>Fitting boundary line models to data works on the assumption that data has boundary structure at the upper edges of the data. This assumption can be assessed using <code>expl_boundary()</code> function. The inputs are the x and y variables.</p>
+<p>Fitting boundary line models to data works on the assumption that data has boundary limiting structure at the upper edges. This assumption is assessed using <code>expl_boundary()</code> function. The inputs are the <code>x</code> and <code>y</code> variables.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> vals[,<span class="dv">1</span>] </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> vals[,<span class="dv">2</span>]</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">expl_boundary</span>(<span class="at">x=</span>x,<span class="at">y=</span>y,<span class="at">shells=</span><span class="dv">10</span>,<span class="at">simulations=</span><span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="card">
-<button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
-<p>Exercise</p>
-</button>
-<div id="my-collapse" class="collapse mt-3">
-<ol type="1">
-<li>Reduce the number of simulations and see the effect</li>
-</ol>
-</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> vals[,<span class="dv">1</span>] </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> vals[,<span class="dv">2</span>]</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">expl_boundary</span>(<span class="at">x=</span>x,<span class="at">y=</span>y,<span class="at">shells=</span><span class="dv">10</span>,<span class="at">simulations=</span><span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -200,172 +220,304 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="boundary-model-fitting-methods">5. Boundary Model Fitting Methods</h2>
 <section id="bolides-algorithm" class="level3">
 <h3 class="anchored" data-anchor-id="bolides-algorithm">5.1 Bolides algorithm</h3>
-<p>This method fit the boundary line following the boundary line determination technique proposed by Schnug <em>et al.</em> (1995). To fit the boundary line using the BOLIDES algorithm , the <code>bolides()</code> function can be used. To check the required arguments for the function, the help page can be launched.</p>
+<p>This method fits the boundary line using the algorithm proposed by Schnug <em>et al</em>. (1995). The <code>bolides()</code> function implements this approach. You can view the required arguments by accessing the function’s help page.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>?bolides</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>?bolides</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The arguments <em><code>x</code></em> and <em><code>y</code></em> are the independent and dependent variable respectively and <code>start</code> is a vector of starting values . The <code>model</code> argument is used to specify the model of the boundary line e.g.&nbsp;“blm” for the linear model. The <code>xmax</code> is an argument that describes the maximum value of the independent variable beyond which the relation of <em><code>x</code></em> and <em><code>y</code></em> is no longer theoretically feasible. Other arguments relate to the plot parameters as in the <code>plot()</code> function.</p>
-<p>All boundary fitting methods require initial starting values for the parameters of a proposed model. The initial starting values are optimized to find the parameters of the proposed model as in the <code>optim()</code> function in base <code>R</code>.</p>
-<p>To get the start starting values, the <code>bolides()</code> function is run with the argument <code>model="explore"</code>. This allows us to view the selected boundary points using the boundary line determination technique.</p>
+<p>Setting the model to <code>model="explore"</code> allows us to view the selected boundary points. This enables the selection of an appropriate boundary model and sensible initial starting values for the model.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bolides</span>(<span class="at">x=</span>x,<span class="at">y=</span>y,<span class="at">model =</span> <span class="st">"explore"</span>, <span class="at">pch=</span><span class="dv">16</span>, <span class="at">col=</span><span class="st">"grey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bolides</span>(<span class="at">x=</span>x,<span class="at">y=</span>y,<span class="at">model =</span> <span class="st">"explore"</span>, <span class="at">pch=</span><span class="dv">16</span>, <span class="at">col=</span><span class="st">"grey"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># From the plot, it can be seen that a `"trapezium"` model will be more appropriate for this data set. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>From the plot, it can be seen that a “trapezium” model will be more appropriate for this data set. The function <code>startValues()</code> can be used to determine initial start values. For more information on <code>startValues()</code> function see <code>?startValues()</code>.</p>
+<p>The function <code>startValues()</code> can be used to determine initial start values for the proposed model. You can view the required arguments by accessing the function’s help page.</p>
+<div class="card">
+<button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
+<p>Note</p>
+</button>
+<div id="my-collapse" class="collapse mt-3">
+<ol type="1">
+<li><p>All boundary fitting methods require initial starting values for the parameters of a proposed model. The initial starting values are optimized to find the parameters of the proposed model as in the <code>optim()</code> function in base <code>R</code>.</p></li>
+<li><p>Note that for the startValues() function to work effectively, the appearance zoom in the global options of R and your computer display zoom should be equal i.e.both should be at 100%.</p></li>
+</ol>
+</div>
+</div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>?<span class="fu">startValues</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>?<span class="fu">startValues</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>With a scatter plot of <em><code>y</code></em> against <em><code>x</code></em> active in the plot window in <code>R</code>, run the function <code>startValues("trapezium")</code>, then use the mouse to click on the plot at five boundary points that follow the trapezium model in order of increasing <em><code>x</code></em> values.</p>
+<p>With a scatter plot active in the plot window, run the function and then use the mouse to click on the plot the boundary points that follow the proposed model structure.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">startValues</span>(<span class="st">"trapezium"</span>) <span class="co"># then select the five points at the edge of the dataset that make up the trapezium model in order of increasing x values.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">startValues</span>(<span class="st">"trapezium"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The proposed start values will be produced. Note that this can be done for other models as well. Once all the arguments are set, the function can be run</p>
+<p>Fill the suggested initial starting values in a vector.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>start <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">14</span>,<span class="dv">104</span>,<span class="sc">-</span><span class="dv">22</span>) <span class="co"># start values is a vector of five consists of intercept, slope, plateau yield, intercept2 and slope2. </span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">bolides</span>(<span class="at">x=</span>x,<span class="at">y=</span>x, <span class="at">start =</span> start,<span class="at">model =</span> <span class="st">"trapezium"</span>,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">xlab=</span><span class="fu">expression</span>(<span class="st">"Phosphorus/ln(mg L"</span><span class="sc">^-</span><span class="dv">1</span><span class="sc">*</span><span class="st">")"</span>), </span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">ylab=</span><span class="fu">expression</span>(<span class="st">"Yield/ t ha"</span><span class="sc">^-</span><span class="dv">1</span>), <span class="at">pch=</span><span class="dv">16</span>, </span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">col=</span><span class="st">"grey"</span>, <span class="at">bp_col=</span><span class="st">"grey"</span>)</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>model2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>start <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">14</span>,<span class="dv">104</span>,<span class="sc">-</span><span class="dv">22</span>) <span class="co"># start values is a vector of five consists of intercept, slope, plateau yield, intercept2 and slope2. </span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">bolides</span>(<span class="at">x=</span>x,<span class="at">y=</span>x, <span class="at">start =</span> start,<span class="at">model =</span> <span class="st">"trapezium"</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">xlab=</span><span class="fu">expression</span>(<span class="st">"Phosphorus/ln(mg L"</span><span class="sc">^-</span><span class="dv">1</span><span class="sc">*</span><span class="st">")"</span>), </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">ylab=</span><span class="fu">expression</span>(<span class="st">"Yield/ t ha"</span><span class="sc">^-</span><span class="dv">1</span>), <span class="at">pch=</span><span class="dv">16</span>, </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">col=</span><span class="st">"grey"</span>, <span class="at">bp_col=</span><span class="st">"grey"</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>model1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The results show that the optimized parameters and plot of the fitted model. There is no uncertainty in the parameters because this is a heuristic method.</p>
-<p>These parameters can then be used to determine boundary line response for any given value of <em><code>x</code></em>. Say you want to predict the maximum possible yield response at soil P values of 4.5, 7.4, 12.2, 20.1 and 54.5 mg/kg. Remember that our model was fitted on values of log soil P and therefore, these values must first be log transformed before the prediction is made. We can use the function <code>predictBL()</code> for this purpose. For more information on this function, see <code>?predictBL()</code> .</p>
+<p>The model can be used to determine maximum yields for any given value of soil P using the function <code>predictBL()</code>.</p>
+<ol type="1">
+<li>What are the maximum possible yields at soil P values of 4.5, 7.4, 12.2, 20.1 and 54.5 mg/kg?</li>
+</ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>P <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">4.5</span>, <span class="fl">7.4</span>, <span class="fl">12.2</span>, <span class="fl">20.1</span>, <span class="fl">54.5</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>P_log <span class="ot">&lt;-</span> <span class="fu">log</span>(P)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>Max_Response <span class="ot">&lt;-</span> <span class="fu">predictBL</span>(model3, P_log) <span class="co"># the argument inputs are the boundary line model and the independent values (in this case P_log)</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>Max_Response</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>P <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">4.5</span>, <span class="fl">7.4</span>, <span class="fl">12.2</span>, <span class="fl">20.1</span>, <span class="fl">54.5</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>P_log <span class="ot">&lt;-</span> <span class="fu">log</span>(P)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>Max_yield <span class="ot">&lt;-</span> <span class="fu">predictBL</span>(model1, P_log) <span class="co"># the argument inputs are the boundary line model and the independent values (in this case P_log)</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>Max_yield</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="card">
 <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
 <p>Exercise 1</p>
 </button>
 <div id="my-collapse" class="collapse mt-3">
-<p>A link to dataset <code>cassava</code> that contains cassava yields and various soil properties is provided below. You can read it into your R session using the following code.</p>
+<p>A link to dataset <code>maize</code> that contains maize yields and various soil properties is provided below. You can read it into your <code>R</code> session using the following code.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>cassava <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://raw.githubusercontent.com/chawezimiti/BLA_NETHERLAND_Rothamsted/refs/heads/main/cassava.csv"</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cassava)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>maize <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://raw.githubusercontent.com/chawezimiti/BLA_NETHERLAND_Rothamsted/refs/heads/main/maize_data.csv"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(maize)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ol type="1">
-<li>Fit the boundary line model for cassava yield and any soil property of your choice using the bolides function assigning it mod_1</li>
+<li>Fit the boundary line model for Maize yield and any soil property of your choice using the <code>bolides()</code> function assigning it mod_1</li>
 </ol>
 </div>
-<!-- Unlock input + button -->
-<div class="mt-3">
-<p><label for="keyInput">Enter key to view answer:</label> <input type="text" id="keyInput" class="form-control" placeholder="Enter keyword"> <button class="btn btn-success mt-2" onclick="checkKey()">Submit</button></p>
-</div>
-<!-- Hidden answer section -->
-<div id="answerContent" class="collapse mt-3">
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>code_here</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<!-- Hide button -->
-<button class="btn btn-outline-secondary mt-2" onclick="hideAnswer()">
-<p>Hide Answer</p>
-</button>
-</div>
-<!-- JavaScript -->
-<script> function checkKey() { const input = document.getElementById('keyInput').value.trim().toLowerCase(); const answer = document.getElementById('answerContent'); if (input === 'model5') { answer.classList.add('show'); } else { alert('Incorrect key. Please try again.'); } } function hideAnswer() { const answer = document.getElementById('answerContent'); answer.classList.remove('show'); } </script>
 </div>
 </section>
 <section id="binning-method" class="level3">
 <h3 class="anchored" data-anchor-id="binning-method">5.2 Binning method</h3>
-<p>The binning methodology involves splitting the data into several sections in the x-axis and selecting a boundary point in each section based on a set criteria (mostly the 95<span class="math inline">\(^{\rm th}\)</span> and 99<span class="math inline">\(^{\rm th}\)</span> percentile) (Shatar and McBratney, 2004). To fit the boundary line using the binning method, the <code>blbin()</code> function can be used. To check the required arguments for the function, the help page can be launched.</p>
+<p>The binning method involves splitting the data into several sections along the x-axis and selecting a boundary point in each section based on a set criteria (e.g.&nbsp;95<span class="math inline">\(^{\rm th}\)</span> and 99<span class="math inline">\(^{\rm th}\)</span> percentile). The <code>blbin()</code> function implements this approach. You can view the required arguments by accessing the function’s help page.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>?blbin</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The arguments <em><code>x</code></em> and <em><code>y</code></em> are the independent and dependent variable respectively and <code>start</code> is a vector of starting values . The <code>model</code> argument is used to specify the model of the boundary line e.g.&nbsp;<code>model="blm"</code> for the linear model. The <code>bins</code> argument describes the size of the bins with a vector of length 3 containing the minimum and maximum independent variable values, and the size of bins to be used for the data respectively. We assume that the 99<span class="math inline">\(^{\rm th}\)</span> percentile (<code>tau=0.99</code>) is the boundary.</p>
-<p>The initial start start values can be determined as previously shown in the previous section</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>bins <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.61</span>,<span class="fl">4.74</span>,<span class="fl">0.313</span>) </span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">blbin</span>(<span class="at">x=</span>x,<span class="at">y=</span>y, bins,<span class="at">model =</span> <span class="st">"explore"</span>, <span class="at">tau=</span><span class="fl">0.99</span>, <span class="at">pch=</span><span class="dv">16</span>, <span class="at">col=</span><span class="st">"grey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">blbin</span>(<span class="at">x=</span>x, <span class="at">y=</span>y, <span class="at">bins=</span>bins, <span class="at">model =</span> <span class="st">"explore"</span>, <span class="at">tau=</span><span class="fl">0.99</span>, <span class="at">pch=</span><span class="dv">16</span>, <span class="at">col=</span><span class="st">"grey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>From the plot, it can be seen that a “trapezium” model will be more appropriate for this data set.</p>
+<p>The <code>"trapezium"</code> model will be more appropriate and the values for <code>start</code> can be determined.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">startValues</span>(<span class="st">"trapezium"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The values for <code>start</code> can now be obtained and the function can now be run.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>start <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">4.75</span>, <span class="fl">3.23</span>, <span class="fl">13.3</span>, <span class="fl">24.87</span>,<span class="sc">-</span><span class="fl">2.95</span> )</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">blbin</span>(<span class="at">x=</span>x,<span class="at">y=</span>y, bins,<span class="at">start =</span> start,<span class="at">model =</span> <span class="st">"trapezium"</span>, </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">blbin</span>(<span class="at">x=</span>x,<span class="at">y=</span>y, bins, <span class="at">start =</span> start, <span class="at">model =</span> <span class="st">"trapezium"</span>, </span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">tau=</span><span class="fl">0.99</span>, </span>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">ylab=</span><span class="fu">expression</span>(<span class="st">"t ha"</span><span class="sc">^-</span><span class="dv">1</span>), </span>
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">xlab=</span><span class="fu">expression</span>(<span class="st">"Phosphorus/ln(mg L"</span><span class="sc">^-</span><span class="dv">1</span><span class="sc">*</span><span class="st">")"</span>), </span>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">pch=</span><span class="dv">16</span>, <span class="at">col=</span><span class="st">"grey"</span>, <span class="at">bp_col=</span><span class="st">"grey"</span>)</span>
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>model1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>model2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="card">
 <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
 <p>Exercise 2</p>
 </button>
 <div id="my-collapse" class="collapse mt-3">
-<p>A link to dataset <code>cassava</code> that contains cassava yields and various soil properties is provided below. You can read it into your R session using the following code.</p>
+<p>A link to dataset <code>maize</code> that contains Maize yields and various soil properties is provided below. You can read it into your <code>R</code> session using the following code.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>cassava <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://raw.githubusercontent.com/chawezimiti/BLA_NETHERLAND_Rothamsted/refs/heads/main/cassava.csv"</span>)</span>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>maize <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://raw.githubusercontent.com/chawezimiti/BLA_NETHERLAND_Rothamsted/refs/heads/main/maize_data.csv"</span>)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cassava)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(maize)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ol type="1">
-<li>Fit the boundary line model for cassava yield and any soil property of your choice using the bolides function assigning it mod_1</li>
+<li>Fit the boundary line model for Maize yield and any soil property of your choice using the <code>blbin()</code> function assigning it mod_2.</li>
 </ol>
 </div>
-<!-- Unlock input + button -->
-<div class="mt-3">
-<p><label for="keyInput">Enter key to view answer:</label> <input type="text" id="keyInput" class="form-control" placeholder="Enter keyword"> <button class="btn btn-success mt-2" onclick="checkKey()">Submit</button></p>
-</div>
-<!-- Hidden answer section -->
-<div id="answerContent" class="collapse mt-3">
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>code_here</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<!-- Hide button -->
-<button class="btn btn-outline-secondary mt-2" onclick="hideAnswer()">
-<p>Hide Answer</p>
-</button>
-</div>
-<!-- JavaScript -->
-<script> function checkKey() { const input = document.getElementById('keyInput').value.trim().toLowerCase(); const answer = document.getElementById('answerContent'); if (input === "model5") { answer.classList.add('show'); } else { alert('Incorrect key. Please try again.'); } } function hideAnswer() { const answer = document.getElementById('answerContent'); answer.classList.remove('show'); } </script>
 </div>
 </section>
 <section id="quantile-regression-method" class="level3">
 <h3 class="anchored" data-anchor-id="quantile-regression-method">5.3 Quantile regression method</h3>
-<p>This method fits the boundary line using the principle of quantile regression (Cade and Noon, 2003). To fit the boundary line using the quantile regression method, the <code>blqr()</code> function can be used. To check the required arguments for the function, the help page can be launched.</p>
+<p>This method fits the boundary line model based the principle of quantile regression. The <code>blqr()</code> function implements this approach. You can view the required arguments by accessing the function’s help page.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>?blqr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>?blqr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The arguments <em><code>x</code></em> and <em><code>y</code></em> are the independent and dependent variable respectively and <code>start</code> is a vector of starting values . The <code>model</code> argument is used to specify the model of the boundary line e.g.&nbsp;“blm” for the linear model. The argument <code>tau</code> describes the quantile value described as boundary. We assume that the 99<span class="math inline">\(^{\rm th}\)</span> quantile (<code>tau=0.99</code>) value is the boundary. This is an arbitrary assumption, and for this reason we treat the method as heuristic.</p>
-<p>The initial start start values can be determined as previously shown in the previous section. however, the <code>blqr()</code> function does not have the explore option and hence the <code>startValues()</code> function is used just on the plot of <em><code>x</code></em> and <em><code>y</code></em> directly according to the suggested model from the structure at the upper edge of the data. The trapezium model will be used for this data.</p>
+<p>The <code>blqr()</code> function does not have the <code>"explore"</code> option. A plot of the <code>x</code> and <code>y</code> variables can be viewed to identify the appropriate boundary model and its initial <code>start</code> values.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x,y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The <code>"trapezium"</code> model will be used for this data.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x,y)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">startValues</span>(<span class="st">"trapezium"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">startValues</span>(<span class="st">"trapezium"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The <code>start</code>values can now be used in the <code>blqr()</code> function.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>start <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">3</span>,<span class="fl">13.5</span>,<span class="dv">31</span>,<span class="sc">-</span><span class="fl">4.5</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">blqr</span>(<span class="at">x=</span>x,<span class="at">y=</span>y, <span class="at">start =</span> start, <span class="at">model =</span> <span class="st">"trapezium"</span>,</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">xlab=</span><span class="fu">expression</span>(<span class="st">"Phosphorus/ mg L"</span><span class="sc">^-</span><span class="dv">1</span>), </span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">ylab=</span><span class="fu">expression</span>(<span class="st">"Phosphorus/ln(mg L"</span><span class="sc">^-</span><span class="dv">1</span><span class="sc">*</span><span class="st">")"</span>),</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">pch=</span><span class="dv">16</span>,<span class="at">tau=</span><span class="fl">0.99</span>, <span class="at">col=</span><span class="st">"grey"</span>) <span class="co"># may take a few seconds to ran</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>model2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>model3 <span class="ot">&lt;-</span> <span class="fu">blqr</span>(<span class="at">x=</span>x,<span class="at">y=</span>y, <span class="at">start =</span> start, <span class="at">model =</span> <span class="st">"trapezium"</span>, </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">tau=</span><span class="fl">0.99</span>,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">xlab=</span><span class="fu">expression</span>(<span class="st">"Phosphorus/ mg L"</span><span class="sc">^-</span><span class="dv">1</span>),</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">ylab=</span><span class="fu">expression</span>(<span class="st">"Phosphorus/ln(mg L"</span><span class="sc">^-</span><span class="dv">1</span><span class="sc">*</span><span class="st">")"</span>),</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">pch=</span><span class="dv">16</span>, <span class="at">col=</span><span class="st">"grey"</span>) <span class="co"># may take a few seconds to ran</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>model3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The results show that the optimized parameters and plot. The quantile regression method will produce measures of uncertainty for parameters, but BLA does not report these because they are conditional on the arbitrary choice of <code>tau</code>. These parameters can then be used to determine boundary line response for any given value of <em><code>x</code></em> using the <code>predictBL()</code> function.</p>
+<p>The resulting model can be used to determine boundary line response for any given value of soil P using the <code>predictBL()</code> function.</p>
 <div class="card">
 <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
 <p>Exercise 3</p>
 </button>
 <div id="my-collapse" class="collapse mt-3">
 <ol type="1">
-<li>Use the <code>cassava</code> dataset to fit the boundary line model for cassava yield and any soil property of your choice using the blqr function assigning it mod_3</li>
+<li><p>Use the <code>maize</code> dataset to fit the boundary line model for maize yield and any soil property of your choice using the <code>blqr()</code> function assigning it mod_3. Use <code>tau</code> = 0.99 and <code>tau</code> = 0.95, see the implication.</p></li>
+<li><p>Predict the maximum possible maize yields for any 4 points in the dataset.</p></li>
+</ol>
+</div>
+</div>
+</section>
+<section id="censored-bivariate-normal-model" class="level3">
+<h3 class="anchored" data-anchor-id="censored-bivariate-normal-model">5.4 Censored bivariate normal model</h3>
+<p>This method fits the boundary line model based the principle of Milne et al.&nbsp;(2006). The blqr() function implements this approach. You can view the required arguments by accessing the function’s help page.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>?cbvn</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>As with the <code>blqr()</code> function, <code>cbvn()</code> does not have the <code>"explore"</code> option. Therefore, a plot of the <code>x</code> and <code>y</code> variables can be viewed to identify the appropriate boundary model and its initial start values.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x,y,<span class="at">pch=</span><span class="dv">16</span>, <span class="at">col=</span><span class="st">"grey"</span>, <span class="at">xlab=</span><span class="st">"soil P"</span>, <span class="at">ylab =</span> <span class="st">"Yield (t/ha)"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The <code>"trapezium"</code> model will be used for this data.</p>
+<section id="determination-of-initial-starting-values" class="level4">
+<h4 class="anchored" data-anchor-id="determination-of-initial-starting-values">5.4.1 Determination of initial starting values</h4>
+<p>The <code>start</code> values for a <code>"trapezium"</code> model in the <code>cbvn()</code> function is a vector of length 10 comprising the y-intercept, slope, plateau value, second y-intercept, second slope and data distribution properties i.e means of <code>x</code> and <code>y</code>, standard deviation of <code>x</code> and <code>y</code>, and their correlation respectively.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">startValues</span>(<span class="st">"trapezium"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can follow 2 options.</p>
+<ol type="1">
+<li>Using single set of starting values</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>start1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">4.3</span>,<span class="fl">3.4</span>,<span class="fl">13.8</span>,<span class="fl">32.8</span>,<span class="sc">-</span><span class="fl">4.9</span>,<span class="fu">mean</span>(x),<span class="fu">mean</span>(y),<span class="fu">sd</span>(x),<span class="fu">sd</span>(y),<span class="fu">cor</span>(x,y))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="2" type="1">
+<li>Using multiple sets of starting values</li>
+</ol>
+<p>We determine multiple start values to avoid model sticking to a local optima solution.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>start2<span class="ot">&lt;-</span><span class="fu">list</span>(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fl">4.3</span>,<span class="fl">3.4</span>,<span class="fl">13.8</span>,<span class="fl">32.8</span>,<span class="sc">-</span><span class="fl">4.9</span>,<span class="fu">mean</span>(x),<span class="fu">mean</span>(y),<span class="fu">sd</span>(x),<span class="fu">sd</span>(y),<span class="fu">cor</span>(x,y)),</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fl">2.5</span>,<span class="fl">4.1</span>,<span class="fl">13.42</span>,<span class="dv">32</span>,<span class="sc">-</span><span class="fl">4.8</span>,<span class="fu">mean</span>(x),<span class="fu">mean</span>(y),<span class="fu">sd</span>(x),<span class="fu">sd</span>(y),<span class="fu">cor</span>(x,y)),</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fl">3.5</span>,<span class="fl">3.7</span>,<span class="fl">13.35</span>,<span class="fl">47.7</span>,<span class="sc">-</span><span class="fl">8.4</span>,<span class="fu">mean</span>(x),<span class="fu">mean</span>(y),<span class="fu">sd</span>(x),<span class="fu">sd</span>(y),<span class="fu">cor</span>(x,y)),</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fl">2.83</span>,<span class="fl">4.11</span>,<span class="fl">13.7</span>,<span class="fl">32.</span>,<span class="sc">-</span><span class="fl">4.6</span>,<span class="fu">mean</span>(x),<span class="fu">mean</span>(y),<span class="fu">sd</span>(x),<span class="fu">sd</span>(y),<span class="fu">cor</span>(x,y)),</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fl">4.1</span>,<span class="fl">3.4</span>,<span class="fl">13.6</span>,<span class="dv">29</span>,<span class="sc">-</span><span class="fl">4.1</span>,<span class="fu">mean</span>(x),<span class="fu">mean</span>(y),<span class="fu">sd</span>(x),<span class="fu">sd</span>(y),<span class="fu">cor</span>(x,y))</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="determination-of-standard-deviation-of-measurement-error" class="level4">
+<h4 class="anchored" data-anchor-id="determination-of-standard-deviation-of-measurement-error">5.4.2 Determination of standard deviation of measurement error</h4>
+<p>The standard deviation of measurement error (<code>sigh</code>) is a fixed parameter for <code>cbvn()</code>. As we do not have a direct measure of <code>sigh</code>, it is determined by log-likelihood profiling. In log-likelihood profiling, the log-likelihoods of several suggested values of <code>sigh</code> are determined given the data distribution and the suggested model. The <code>sigh</code> value with the largest log-likelihood is selected. This is achieved using the <code>ble_profile()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>sigh<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="fl">0.3</span>,<span class="fl">0.4</span>,<span class="fl">0.5</span>,<span class="fl">0.6</span>,<span class="fl">0.7</span>,<span class="fl">0.8</span>,<span class="fl">0.9</span>,<span class="dv">1</span>) <span class="co"># we suggest sigh values ranging from 0.3 to 1 t/ha</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol type="1">
+<li>Using single set of starting values</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ble_profile</span>(<span class="at">data =</span> vals, <span class="at">start =</span> start1, <span class="at">sigh =</span> sigh, <span class="at">model =</span> <span class="st">"trapezium"</span>, <span class="at">plot =</span> T)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: This function will take a longer to run as it is evaluating each sigh value.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="2" type="1">
+<li>Using multiple sets of starting values</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>profile <span class="ot">&lt;-</span> <span class="fu">lapply</span>(start2, <span class="cf">function</span>(start2) {</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lapply</span>(sigh, <span class="cf">function</span>(sigh) {</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ble_profile</span>(<span class="at">data =</span> vals, <span class="at">start =</span> start2, <span class="at">sigh =</span> sigh, <span class="at">model =</span> <span class="st">"trapezium"</span>, <span class="at">plot =</span> F)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract log-likelihood and sigh (Merror) values from profile list</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>log_likelihood <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(profile, <span class="cf">function</span>(sublist) {</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sapply</span>(sublist, <span class="cf">function</span>(x) x[[<span class="st">"log-likelihood"</span>]])</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>Merror<span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(profile, <span class="cf">function</span>(sublist) {</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sapply</span>(sublist, <span class="cf">function</span>(x) x[[<span class="st">"Merror"</span>]])</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a><span class="co"># The sigh with the smallest negative log-likelihood </span></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>Merror[<span class="fu">which</span>(log_likelihood<span class="sc">==</span><span class="fu">max</span>(log_likelihood, <span class="at">na.rm =</span> T))]<span class="co"># profile maximized  at 0.4 t/ha</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Plotting the log-likelihood profile for visualization</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>me_profile<span class="ot">&lt;-</span><span class="fu">data.frame</span>(<span class="at">x=</span>Merror,<span class="at">y=</span>log_likelihood)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>me_profile<span class="ot">&lt;-</span>me_profile[<span class="fu">order</span>(Merror),] <span class="co"># ordering data from smallest to largest Merror</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>vec<span class="ot">&lt;-</span><span class="fu">vector</span>()</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">unique</span>(me_profile<span class="sc">$</span>x)){ </span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  maxy<span class="ot">&lt;-</span><span class="fu">max</span>(me_profile[<span class="fu">which</span>(me_profile<span class="sc">$</span>x<span class="sc">==</span>i),]<span class="sc">$</span>y, <span class="at">na.rm =</span> T)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  vec<span class="ot">&lt;-</span><span class="fu">c</span>(vec,maxy)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ploting the largest value at each Merror</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">4</span>))</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">unique</span>(me_profile<span class="sc">$</span>x),vec,<span class="at">pch=</span><span class="dv">16</span>, </span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="fu">expression</span>(<span class="fu">bold</span>(sigma[e]<span class="sc">*</span><span class="st">"/t ha"</span><span class="sc">^-</span><span class="dv">1</span>)),</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="fu">expression</span>(<span class="fu">bold</span>(log<span class="sc">-</span>Likelihood)),</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>     <span class="at">cex.lab=</span><span class="fl">1.8</span>, <span class="at">cex.axis=</span><span class="fl">1.8</span>)</span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">unique</span>(me_profile<span class="sc">$</span>x),vec, <span class="at">lty=</span><span class="dv">5</span>, <span class="at">lwd=</span><span class="fl">1.5</span>) </span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span>Merror[<span class="fu">which</span>(log_likelihood<span class="sc">==</span><span class="fu">max</span>(log_likelihood, <span class="at">na.rm =</span> T))],</span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty=</span><span class="dv">5</span>, <span class="at">col=</span><span class="st">"red"</span>, <span class="at">lwd=</span><span class="fl">1.3</span>) <span class="co"># sigh with largest log-likelihood</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="fitting-the-boundary-line-using-cbvn-model" class="level4">
+<h4 class="anchored" data-anchor-id="fitting-the-boundary-line-using-cbvn-model">5.4.3 Fitting the boundary line using cbvn model</h4>
+<ol type="1">
+<li><strong>Using single set of starting values</strong></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>model4 <span class="ot">&lt;-</span> <span class="fu">cbvn</span>(<span class="at">data=</span>vals, <span class="at">start =</span> start1, <span class="at">sigh=</span><span class="fl">0.4</span>, <span class="at">model =</span> <span class="st">"trapezium"</span>,</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">optim.method =</span> <span class="st">"Nelder-Mead"</span>,</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">xlab=</span><span class="fu">expression</span>(<span class="st">"Phosphorus/ mg L"</span><span class="sc">^-</span><span class="dv">1</span>),</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">ylab=</span><span class="fu">expression</span>(<span class="st">"Yield/ t ha"</span><span class="sc">^-</span><span class="dv">1</span>), <span class="at">pch=</span><span class="dv">16</span>, <span class="at">col=</span><span class="st">"grey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="2" type="1">
+<li><strong>Using multiple sets of starting values</strong></li>
+</ol>
+<p>The <code>lapply()</code> function is used here to allows us to loop the <code>cbvn()</code> over the different start values. The <code>tryCatch()</code> allows the loop function to continue to the next input when the function fails to converge at a given input combination.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">lapply</span>(start2, <span class="cf">function</span>(start2) {</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tryCatch</span>(</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cbvn</span>(<span class="at">data=</span>vals, <span class="at">start =</span> start2, <span class="at">sigh=</span><span class="fl">0.4</span>, <span class="at">model =</span> <span class="st">"trapezium"</span>,</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">optim.method =</span> <span class="st">"Nelder-Mead"</span>,</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">xlab=</span><span class="fu">expression</span>(<span class="st">"Phosphorus/ mg L"</span><span class="sc">^-</span><span class="dv">1</span>), </span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">ylab=</span><span class="fu">expression</span>(<span class="st">"Yield/ t ha"</span><span class="sc">^-</span><span class="dv">1</span>), <span class="at">pch=</span><span class="dv">16</span>, <span class="at">col=</span><span class="st">"grey"</span>),</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">error=</span><span class="cf">function</span>(e) <span class="cn">NA</span>) </span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The solution with the smallest AIC, an output of the <code>cbvn()</code> function, is selected.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>model4 <span class="ot">&lt;-</span> models[[<span class="fu">which.min</span>(<span class="fu">unlist</span>(<span class="fu">lapply</span>(<span class="at">X=</span>models,<span class="at">FUN =</span> <span class="cf">function</span>(a){</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  b<span class="ot">&lt;-</span><span class="fu">tryCatch</span>(a<span class="sc">$</span>AIC[<span class="dv">2</span>,<span class="dv">1</span>],<span class="at">error=</span><span class="cf">function</span>(e) <span class="cn">NA</span>)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(b)})))]]</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>model4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="card">
+<button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
+<p>Exercise 4</p>
+</button>
+<div id="my-collapse" class="collapse mt-3">
+<ol type="1">
+<li>Determine the boundary line for soil pH from the <code>Soil</code> dataset (within the <code>BLA</code>) and assign it mod_5. Use the <code>sigh = 0.4</code>. There is no need to test for presence of boundary as it has already been established earlier using Soil P.</li>
 </ol>
 </div>
 <!-- Unlock input + button -->
@@ -375,7 +527,7 @@ window.Quarto = {
 <!-- Hidden answer section -->
 <div id="answerContent" class="collapse mt-3">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>code_here</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>code_here</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <!-- Hide button -->
 <button class="btn btn-outline-secondary mt-2" onclick="hideAnswer()">
@@ -383,113 +535,22 @@ window.Quarto = {
 </button>
 </div>
 <!-- JavaScript -->
-<script> function checkKey() { const input = document.getElementById('keyInput').value.trim().toLowerCase(); const answer = document.getElementById('answerContent'); if (input === 'model5') { answer.classList.add('show'); } else { alert('Incorrect key. Please try again.'); } } function hideAnswer() { const answer = document.getElementById('answerContent'); answer.classList.remove('show'); } </script>
+<script> function checkKey() { const input = document.getElementById('keyInput').value.trim().toLowerCase(); const answer = document.getElementById('answerContent'); if (input === 'model') { answer.classList.add('show'); } else { alert('Incorrect key. Please try again.'); } } function hideAnswer() { const answer = document.getElementById('answerContent'); answer.classList.remove('show'); } </script>
 </div>
 </section>
-<section id="censored-bivariate-normal-model" class="level3">
-<h3 class="anchored" data-anchor-id="censored-bivariate-normal-model">5.4 Censored bivariate normal model</h3>
-<p>Before fitting the boundary line model, the data is plotted to get a feel of the distribution of points at the upper edges. This allows the selection of an appropriate boundary model. This should be supported by biological/agronomic plausibility.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x,y,<span class="at">pch=</span><span class="dv">16</span>, <span class="at">col=</span><span class="st">"grey"</span>, <span class="at">xlab=</span><span class="st">"soil P"</span>, <span class="at">ylab =</span> <span class="st">"Yield (t/ha)"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>A trapezium boundary model is appropriate for this data. The censored bivariate normal procedure (cbvn) will be used to fit the boundary model. To fit the cbvn, some arguments need to be estimated. These include the initial starting values of the trapezium model and value for the standard deviation of measurement error.</p>
-<section id="determination-of-initial-starting-values" class="level4">
-<h4 class="anchored" data-anchor-id="determination-of-initial-starting-values">5.4.1 Determination of initial starting values</h4>
-<p>Here we come up with the initial starting values for the optimization process. Since the selected model is the trapezium, the starting values will be a vector of length 10 comprising the y-intercept, slope, plateau value, second y-intercept, second slope and data distribution properties i.e means of <code>x</code> and <code>y</code>, standard deviation of <code>x</code> and <code>y</code>, and their correlation.</p>
-<p>To determine start values for the selected trapezium model, the <code>startValues()</code> function is used. We determine several start values to avoid sticking to a local optimum solution. Note that for the <code>startValues()</code> function to work effectively, the appearance zoom in the global options of R and your computer display zoom should be equal i.e.both should be at 100%.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">startValues</span>(<span class="st">"trapezium"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>click on the plot 4 points that make up the trapezium structure at the upper edge of the data cloud in a clockwise movement. We run this step multiple times and the values are added to the list of starting values below.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>start<span class="ot">&lt;-</span><span class="fu">list</span>(</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fl">4.3</span>,<span class="fl">3.4</span>,<span class="fl">13.8</span>,<span class="fl">32.8</span>,<span class="sc">-</span><span class="fl">4.9</span>,<span class="fu">mean</span>(x),<span class="fu">mean</span>(y),<span class="fu">sd</span>(x),<span class="fu">sd</span>(y),<span class="fu">cor</span>(x,y)),</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fl">2.5</span>,<span class="fl">4.1</span>,<span class="fl">13.42</span>,<span class="dv">32</span>,<span class="sc">-</span><span class="fl">4.8</span>,<span class="fu">mean</span>(x),<span class="fu">mean</span>(y),<span class="fu">sd</span>(x),<span class="fu">sd</span>(y),<span class="fu">cor</span>(x,y)),</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fl">3.5</span>,<span class="fl">3.7</span>,<span class="fl">13.35</span>,<span class="fl">47.7</span>,<span class="sc">-</span><span class="fl">8.4</span>,<span class="fu">mean</span>(x),<span class="fu">mean</span>(y),<span class="fu">sd</span>(x),<span class="fu">sd</span>(y),<span class="fu">cor</span>(x,y)),</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fl">2.83</span>,<span class="fl">4.11</span>,<span class="fl">13.7</span>,<span class="fl">32.</span>,<span class="sc">-</span><span class="fl">4.6</span>,<span class="fu">mean</span>(x),<span class="fu">mean</span>(y),<span class="fu">sd</span>(x),<span class="fu">sd</span>(y),<span class="fu">cor</span>(x,y)),</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fl">4.1</span>,<span class="fl">3.4</span>,<span class="fl">13.6</span>,<span class="dv">29</span>,<span class="sc">-</span><span class="fl">4.1</span>,<span class="fu">mean</span>(x),<span class="fu">mean</span>(y),<span class="fu">sd</span>(x),<span class="fu">sd</span>(y),<span class="fu">cor</span>(x,y))</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 </section>
-<section id="determination-of-standard-deviation-of-measurement-error" class="level4">
-<h4 class="anchored" data-anchor-id="determination-of-standard-deviation-of-measurement-error">5.4.2 Determination of standard deviation of measurement error</h4>
-<p>The standard deviation of measurement error (<code>sigh</code>) is a fixed parameter in the boundary line determination using cbvn. As we do not have a direct measure of <code>sigh</code>, it is determined by log-likelihood profiling. In this process, the negative log-likelihoods of several suggested values of sigh are determined given the data distribution and the suggested model. The sigh value with the smallest negative log-likelihood is selected. This is done using the <code>ble_profile()</code> function at the multiple start values.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>sigh<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="fl">0.3</span>,<span class="fl">0.4</span>,<span class="fl">0.5</span>,<span class="fl">0.6</span>,<span class="fl">0.7</span>,<span class="fl">0.8</span>,<span class="fl">0.9</span>,<span class="dv">1</span>) <span class="co"># we suggest sigh values ranging from 0.3 to 1 t/ha</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p><strong>Note</strong>: This function will take a few minutes to run as it is evaluating each sigh value for each set of start values. We use the lapply function to loop over each sigh and start value set.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>profile <span class="ot">&lt;-</span> <span class="fu">lapply</span>(start, <span class="cf">function</span>(start) {</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lapply</span>(sigh, <span class="cf">function</span>(sigh) {</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ble_profile</span>(<span class="at">data =</span> vals, <span class="at">start =</span> start, <span class="at">sigh =</span> sigh, <span class="at">model =</span> <span class="st">"trapezium"</span>, <span class="at">plot =</span> F)</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract log-likelihood and sigh (Merror) values from profile list</span></span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>log_likelihood <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(profile, <span class="cf">function</span>(sublist) {</span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sapply</span>(sublist, <span class="cf">function</span>(x) x[[<span class="st">"log-likelihood"</span>]])</span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>}))</span>
-<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>Merror<span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(profile, <span class="cf">function</span>(sublist) {</span>
-<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sapply</span>(sublist, <span class="cf">function</span>(x) x[[<span class="st">"Merror"</span>]])</span>
-<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>}))</span>
-<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a><span class="co"># The sigh with the smallest negative log-likelihood </span></span>
-<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>Merror[<span class="fu">which</span>(log_likelihood<span class="sc">==</span><span class="fu">max</span>(log_likelihood, <span class="at">na.rm =</span> T))]<span class="co"># profile maximized  at 0.4 t/ha</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Plotting the log-likelihood profile for visualization</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>me_profile<span class="ot">&lt;-</span><span class="fu">data.frame</span>(<span class="at">x=</span>Merror,<span class="at">y=</span>log_likelihood)</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>me_profile<span class="ot">&lt;-</span>me_profile[<span class="fu">order</span>(Merror),] <span class="co"># ordering data from smallest to largest Merror</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>vec<span class="ot">&lt;-</span><span class="fu">vector</span>()</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="fu">unique</span>(me_profile<span class="sc">$</span>x)){ </span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  maxy<span class="ot">&lt;-</span><span class="fu">max</span>(me_profile[<span class="fu">which</span>(me_profile<span class="sc">$</span>x<span class="sc">==</span>i),]<span class="sc">$</span>y, <span class="at">na.rm =</span> T)</span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  vec<span class="ot">&lt;-</span><span class="fu">c</span>(vec,maxy)</span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ploting the largest value at each Merror</span></span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">4</span>))</span>
-<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">unique</span>(me_profile<span class="sc">$</span>x),vec,<span class="at">pch=</span><span class="dv">16</span>, </span>
-<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="fu">expression</span>(<span class="fu">bold</span>(sigma[e]<span class="sc">*</span><span class="st">"/t ha"</span><span class="sc">^-</span><span class="dv">1</span>)),</span>
-<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="fu">expression</span>(<span class="fu">bold</span>(log<span class="sc">-</span>Likelihood)),</span>
-<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>     <span class="at">cex.lab=</span><span class="fl">1.8</span>, <span class="at">cex.axis=</span><span class="fl">1.8</span>)</span>
-<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">unique</span>(me_profile<span class="sc">$</span>x),vec, <span class="at">lty=</span><span class="dv">5</span>, <span class="at">lwd=</span><span class="fl">1.5</span>) </span>
-<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span>Merror[<span class="fu">which</span>(log_likelihood<span class="sc">==</span><span class="fu">max</span>(log_likelihood, <span class="at">na.rm =</span> T))],</span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty=</span><span class="dv">5</span>, <span class="at">col=</span><span class="st">"red"</span>, <span class="at">lwd=</span><span class="fl">1.3</span>) <span class="co"># sigh with largest log-likelihood</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 </section>
-<section id="fitting-the-boundary-line-using-cbvn-model" class="level4">
-<h4 class="anchored" data-anchor-id="fitting-the-boundary-line-using-cbvn-model">5.4.3 Fitting the boundary line using cbvn model</h4>
-<p>All the arguments for the censored bivariate normal model function are set. To fit the boundary line, the function <code>cbvn()</code> is used. We do this using multiple start values to avoid sticking at a local optimum solution. The solution with the smallest negative log-likelihood value is selected. This is equivalent to selecting the model with the smallest Aikaike Information Criterion (AIC) value, which is an output of the <code>cbvn()</code> function. The <code>lapply()</code> function is used here to allows us to loop the <code>cbvn()</code> over the different start values. The <code>tryCatch()</code> allows the loop function to continue to the next input when the function fails to converge at a given input combination.</p>
+<section id="post-hoc-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="post-hoc-analysis">6. Post-hoc analysis</h2>
+<section id="predicting-boundary-yield-for-each-data-point-in-our-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="predicting-boundary-yield-for-each-data-point-in-our-dataset">6.1 Predicting boundary yield for each data point in our dataset</h3>
+<p>The largest expected yield for each value of soil P in our data set is estimated from the boundary line model parameters using the function <code>predictBL()</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>models <span class="ot">&lt;-</span> <span class="fu">lapply</span>(start, <span class="cf">function</span>(start) {</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tryCatch</span>(</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cbvn</span>(<span class="at">data=</span>vals, <span class="at">start =</span> start, <span class="at">sigh=</span><span class="fl">0.4</span>, <span class="at">model =</span> <span class="st">"trapezium"</span>,</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">optim.method =</span> <span class="st">"Nelder-Mead"</span>,</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">xlab=</span><span class="fu">expression</span>(<span class="st">"Phosphorus/ mg L"</span><span class="sc">^-</span><span class="dv">1</span>), </span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">ylab=</span><span class="fu">expression</span>(<span class="st">"Yield/ t ha"</span><span class="sc">^-</span><span class="dv">1</span>), <span class="at">pch=</span><span class="dv">16</span>, <span class="at">col=</span><span class="st">"grey"</span>),</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">error=</span><span class="cf">function</span>(e) <span class="cn">NA</span>) </span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Selects the solution with the smallest value of <strong>AIC</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>model_4 <span class="ot">&lt;-</span> models[[<span class="fu">which.min</span>(<span class="fu">unlist</span>(<span class="fu">lapply</span>(<span class="at">X=</span>models,<span class="at">FUN =</span> <span class="cf">function</span>(a){</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  b<span class="ot">&lt;-</span><span class="fu">tryCatch</span>(a<span class="sc">$</span>AIC[<span class="dv">2</span>,<span class="dv">1</span>],<span class="at">error=</span><span class="cf">function</span>(e) <span class="cn">NA</span>)</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(b)})))]]</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>Model_4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>P_data <span class="ot">&lt;-</span><span class="fu">log</span>(soil<span class="sc">$</span>P) <span class="co"># extracting soil P from the data set</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>P_data[<span class="fu">which</span>(<span class="fu">is.na</span>(P_data)<span class="sc">==</span>T)]<span class="ot">&lt;-</span><span class="fu">mean</span>(P_data,<span class="at">na.rm=</span>T) <span class="co"># replace missing values with mean soil P value</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>P<span class="ot">&lt;-</span><span class="fu">predictBL</span>(model4,P_data) <span class="co"># boundary yield for soil P</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="card">
 <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
@@ -497,73 +558,43 @@ window.Quarto = {
 </button>
 <div id="my-collapse" class="collapse mt-3">
 <ol type="1">
-<li>Determine the boundary line for soil pH from the <code>Soil</code> dataset (within the BLA) and assign it Model_5. Use the <code>sigh = 0.6</code>. There is no need to test for presence of boundary as it has already been established earlier using Soil P.</li>
+<li>Use the results from your mod_4 for soil pH to predict the largest yields for each value of soil pH in the <code>soil</code> dataset. Replace the missing pH values with the mean and assign the predicted yields as pH.</li>
 </ol>
 </div>
-<!-- Unlock input + button -->
-<div class="mt-3">
-<p><label for="keyInput">Enter key to view answer:</label> <input type="text" id="keyInput" class="form-control" placeholder="Enter keyword"> <button class="btn btn-success mt-2" onclick="checkKey()">Submit</button></p>
-</div>
-<!-- Hidden answer section -->
-<div id="answerContent" class="collapse mt-3">
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>code_here</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<!-- Hide button -->
-<button class="btn btn-outline-secondary mt-2" onclick="hideAnswer()">
-<p>Hide Answer</p>
-</button>
-</div>
-<!-- JavaScript -->
-<script> function checkKey() { const input = document.getElementById('keyInput').value.trim().toLowerCase(); const answer = document.getElementById('answerContent'); if (input === 'model5') { answer.classList.add('show'); } else { alert('Incorrect key. Please try again.'); } } function hideAnswer() { const answer = document.getElementById('answerContent'); answer.classList.remove('show'); } </script>
 </div>
 </section>
-</section>
-</section>
-<section id="predicting-boundary-yield-for-each-data-point-in-our-dataset" class="level2">
-<h2 class="anchored" data-anchor-id="predicting-boundary-yield-for-each-data-point-in-our-dataset">6. Predicting boundary yield for each data point in our dataset</h2>
-<p>The largest expected yield for each value of soil P in our data set is estimated from the boundary line model parameters. This is done using the function <code>predictBL()</code>. The inputs are the model object and a vector of soil P values.</p>
+<section id="determining-the-most-limiting-factor" class="level3">
+<h3 class="anchored" data-anchor-id="determining-the-most-limiting-factor">6.2 Determining the most-limiting factor</h3>
+<p>One of the key advantages of boundary line analysis is its ability to identify the most limiting factor among multiple variables by comparing their boundary lines. From the predicted boundary yield using model4 and model5 for soil P and soil pH respectively, we can determine which factor, soil P or soil pH, is most-limiting.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>P_data <span class="ot">&lt;-</span><span class="fu">log</span>(soil<span class="sc">$</span>P) <span class="co"># extracting soil P from the data set</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>                     <span class="co"># replace missing values with mean soil P value</span></span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>P<span class="ot">&lt;-</span><span class="fu">predictBL</span>(model_1,P_data) <span class="co"># boundary yield for soil P</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div class="card">
-<button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
-<p>Exercise 6</p>
-</button>
-<div id="my-collapse" class="collapse mt-3">
-<ol type="1">
-<li>Use the results from your model5 for soil pH to predict the largest yields for each value of soil pH. Replace the missing pH value with the mean.</li>
-</ol>
-</div>
-<!-- Unlock input + button -->
-<div class="mt-3">
-<p><label for="keyInput">Enter key to view answer:</label> <input type="text" id="keyInput" class="form-control" placeholder="Enter keyword"> <button class="btn btn-success mt-2" onclick="checkKey()">Submit</button></p>
-</div>
-<!-- Hidden answer section -->
-<div id="answerContent" class="collapse mt-3">
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>code_here</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<!-- Hide button -->
-<button class="btn btn-outline-secondary mt-2" onclick="hideAnswer()">
-<p>Hide Answer</p>
-</button>
-</div>
-<!-- JavaScript -->
-<script> function checkKey() { const input = document.getElementById('keyInput').value.trim().toLowerCase(); const answer = document.getElementById('answerContent'); if (input === 'model5') { answer.classList.add('show'); } else { alert('Incorrect key. Please try again.'); } } function hideAnswer() { const answer = document.getElementById('answerContent'); answer.classList.remove('show'); } </script>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>Limiting_factor <span class="ot">&lt;-</span> <span class="fu">limfactor</span>(P, pH) </span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co"># This produces a list of length 2, containing a vector of most-limiting factor for each point in dataset and the maximum predicted response in the dataset.</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>Limiting_factors <span class="ot">&lt;-</span> Limiting_factor[[<span class="dv">1</span>]]</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(Limiting_factors)</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Graphical plot</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>{<span class="fu">barplot</span>(<span class="fu">prop.table</span>(<span class="fu">table</span>(Limiting_factors[,<span class="dv">2</span>]))<span class="sc">*</span><span class="dv">100</span>,</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Percentage (%)"</span>,</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">"Soil property"</span>,</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">"grey"</span>,</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">90</span>))</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a><span class="fu">axis</span>(<span class="at">side =</span> <span class="dv">1</span>, <span class="at">at =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">4</span>, <span class="at">by =</span> <span class="dv">1</span>), <span class="at">labels =</span> <span class="cn">FALSE</span>, <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">col.ticks =</span> <span class="st">"white"</span>)  </span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a><span class="fu">axis</span>(<span class="at">side =</span> <span class="dv">2</span>, <span class="at">lwd =</span> <span class="dv">1</span>)</span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="posthoc-analysis" class="level2">
-<h2 class="anchored" data-anchor-id="posthoc-analysis">8. Posthoc Analysis</h2>
 </section>
 <section id="additional-material-using-your-own-defined-model" class="level2">
-<h2 class="anchored" data-anchor-id="additional-material-using-your-own-defined-model">9. Additional Material: Using your own defined model</h2>
-<p>The illustrated methods for fitting the boundary line have some in-built models. These include the linear, linear plateau, mitscherlich, schmidt, logistic, logistic model proposed by Nelder (1961), the inverse logistic, double logistic, quadratic and the trapezium models. However, there are some cases where one wants to fit another model which is not part of the built in models. The following steps will illustrate how to fit a custom model. Though this will be illustrated using the <code>bolides()</code> function, it also applies for the <code>blbin()</code>, <code>blqr()</code> and <code>cbvn()</code> functions.</p>
+<h2 class="anchored" data-anchor-id="additional-material-using-your-own-defined-model">7. Additional Material: Using your own defined model</h2>
+<p>The illustrated methods for fitting the boundary line have used the in-built models. These include the <code>"blm"</code>, <code>"lp"</code>, <code>"trapezium"</code>, <code>"mit"</code>, <code>"schmidt"</code>, <code>"logistic"</code>, <code>"inv-logistic"</code>, <code>"double-logistic"</code> and <code>"qd"</code> models. However, there are some cases where one wants to fit another model which is not part of the in-built models. The following steps will illustrate how to fit a custom model. Though this will be illustrated using the <code>bolides()</code> function, it also applies for the <code>blbin()</code>, <code>blqr()</code> and <code>cbvn()</code> functions.</p>
 <p>Assuming that the initial data exploratory step have been done, the first step is to check the structure of the boundary points using the argument <code>model="explore"</code> in the <code>bolides()</code> function.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bolides</span>(<span class="at">x=</span>x,<span class="at">y=</span>x,<span class="at">model=</span><span class="st">"explore"</span>, <span class="at">pch=</span><span class="dv">16</span>, <span class="at">col=</span><span class="st">"grey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bolides</span>(<span class="at">x=</span>x,<span class="at">y=</span>x,<span class="at">model=</span><span class="st">"explore"</span>, <span class="at">pch=</span><span class="dv">16</span>, <span class="at">col=</span><span class="st">"grey"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Lets say you want to fit a model</p>
 <p><span class="math display">\[
@@ -571,34 +602,43 @@ y=\beta_0 - \beta_1(x-\beta_2)^2
 \]</span></p>
 <p>The model is written in form of an <code>R</code> function and the parameters should always be written in alphabetical order as <em><strong>a</strong>, <strong>b</strong></em> and <strong><em>c</em></strong> for a three parameter function, <em><strong>a</strong>, <strong>b</strong>,<strong>c</strong></em> and <strong><em>d</em></strong> for four parameter function and so on.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>custom_function<span class="ot">&lt;-</span><span class="cf">function</span>(x,a,b,c){</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  y<span class="ot">&lt;-</span> a <span class="sc">-</span> b<span class="sc">*</span>(x<span class="sc">-</span>c)<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>custom_function<span class="ot">&lt;-</span><span class="cf">function</span>(x,a,b,c){</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  y<span class="ot">&lt;-</span> a <span class="sc">-</span> b<span class="sc">*</span>(x<span class="sc">-</span>c)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The next step is to suggest the initial start <code>start</code> values. These should be sensible values else the function will not converge. These should be arranges in alphabetical order as <code>start=c(a,b,c)</code>. Replace a, b and c with numeric values of your choice.</p>
-<p>The arguments of <code>bolides()</code> function can now be added. In this case, the argument model while be set to “other”. The arguments equation is now set to your custom function (<code>equation=custom_function</code>)</p>
+<p>The arguments of <code>bolides()</code> function can now be added. In this case, the argument <code>model</code> while be set to <code>"other"</code>. The arguments <code>equation</code> should now be set to your custom function (<code>equation=custom_function</code>)</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>start<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="fl">13.5</span>,<span class="dv">3</span>,<span class="fl">3.3</span>)  </span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>model4<span class="ot">&lt;-</span><span class="fu">bolides</span>(x,y, <span class="at">start =</span> start,<span class="at">model =</span> <span class="st">"other"</span>,</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">equation=</span>custom_function,</span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">xlab=</span><span class="fu">expression</span>(<span class="st">"Phosphorus/mg L"</span><span class="sc">^-</span><span class="dv">1</span>), </span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">ylab=</span><span class="fu">expression</span>(<span class="st">"Phosphorus/ln(mg L"</span><span class="sc">^-</span><span class="dv">1</span><span class="sc">*</span><span class="st">")"</span>), </span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">pch=</span><span class="dv">16</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="fl">3.8</span>,<span class="fl">14.5</span>), <span class="at">col=</span><span class="st">"grey"</span>,<span class="at">bp_col=</span><span class="st">"grey"</span>)</span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>model4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>start<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="fl">13.5</span>,<span class="dv">3</span>,<span class="fl">3.3</span>)  </span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>model5<span class="ot">&lt;-</span><span class="fu">bolides</span>(vals[,<span class="dv">1</span>], vals[,<span class="dv">2</span>], <span class="at">start =</span> start, <span class="at">model =</span> <span class="st">"other"</span>,</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">equation=</span>custom_function,</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">xlab=</span><span class="fu">expression</span>(<span class="st">"Phosphorus/mg L"</span><span class="sc">^-</span><span class="dv">1</span>), </span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">ylab=</span><span class="fu">expression</span>(<span class="st">"Phosphorus/ln(mg L"</span><span class="sc">^-</span><span class="dv">1</span><span class="sc">*</span><span class="st">")"</span>), </span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">pch=</span><span class="dv">16</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="fl">3.8</span>,<span class="fl">14.5</span>), <span class="at">col=</span><span class="st">"grey"</span>,<span class="at">bp_col=</span><span class="st">"grey"</span>)</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>model5</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The parameters of the models are shown in the results. A prediction of the boundary response values for each value of <em><code>x</code></em> can the be done as previously shown using the <code>predictBL()</code> function.</p>
 <div class="card">
 <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
-<p>Exercise 7</p>
+<p>Exercise 6</p>
 </button>
 <div id="my-collapse" class="collapse mt-3">
 <ol type="1">
-<li>From the variables in data, choose one and fit the boundary line model using a custom model of your choice.</li>
+<li>From the <code>maize</code> data, choose one variable and fit the boundary line model using a custom model of your choice.</li>
 </ol>
 </div>
 </div>
+</section>
+<section id="day-2-boundary-line-exercise-session" class="level2">
+<h2 class="anchored" data-anchor-id="day-2-boundary-line-exercise-session">DAY 2: BOUNDARY LINE EXERCISE SESSION</h2>
+<p>The link below provides access to a dataset called <code>maize</code>, which contains maize yields along with various soil properties gathered from farms in Ethiopia:</p>
+<p>https://raw.githubusercontent.com/chawezimiti/BLA_NETHERLAND_Rothamsted/refs/heads/main/maize_data.csv</p>
+<ol type="1">
+<li><p>Identify the most-limiting factor at each point in the data set and produce a plot showing the proportions of each limiting factor.</p></li>
+<li><p>Identify the critical values for each factor in the dataset.</p></li>
+</ol>
 </section>
 
 </main>
