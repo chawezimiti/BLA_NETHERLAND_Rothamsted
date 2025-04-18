@@ -200,7 +200,7 @@ The binning method involves splitting the data into several sections along the x
 ```
 
 ```{r,fig.align='center', fig.dim=c(4,4), eval=FALSE}
-bins <- c(min(x), max(x), (max(x)-min(x))/10)
+bins <- c(min(x), max(x), (max(x)-min(x))/10) # to get 10 bins
 
 blbin(x=x, y=y, bins=bins, model = "explore", tau=0.99, pch=16, col="grey")
 ```
@@ -608,7 +608,7 @@ plot(Limiting_factors$Rs, soil$yield,
      xlab="Predicted yield (t/ha)",
      ylab="Actual yield (/ha)", pch=16, col="grey")
 
-abline(h=Limiting_factor[[2]], col="blue", lty=5, lwd=1)
+abline(h=Attainable_yield, col="blue", lty=5, lwd=1)
 lines(c(min(Limiting_factors$Rs),max(Limiting_factors$Rs)), 
 c(min(Limiting_factors$Rs),max(Limiting_factors$Rs)), 
 col="red", lwd=2)
