@@ -294,7 +294,7 @@ Exercise 3
 </button>
 
 ::: {#my-collapse .collapse .mt-3}
-1.  Use the `maize` dataset to fit the boundary line model for maize yield as function of soil N using the `blqr()` function assigning it mod_3. Use `tau` = 0.99 and `tau` = 0.95, see the implication.
+1.  Use the `maize` dataset to fit the boundary line model for maize yield as function of soil N using the `blqr()` function assigning it mod_3.
 
 2.  Predict the maximum possible maize yields for any 4 points in the dataset.
 :::
@@ -302,7 +302,7 @@ Exercise 3
 
 ### 5.4 Censored bivariate normal model
 
-This method fits the boundary line model based the principle of Milne et al. (2006). The blqr() function implements this approach. You can view the required arguments by accessing the function’s help page.
+This method fits the boundary line model based the principle of Milne et al. (2006). The `cbvn()` function implements this approach. You can view the required arguments by accessing the function’s help page.
 
 ```{r, eval = FALSE}
 ?cbvn
