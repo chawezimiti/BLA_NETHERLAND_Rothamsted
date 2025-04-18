@@ -58,16 +58,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="quarto_files/libs/clipboard/clipboard.min.js"></script>
-<script src="quarto_files/libs/quarto-html/quarto.js"></script>
-<script src="quarto_files/libs/quarto-html/popper.min.js"></script>
-<script src="quarto_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="quarto_files/libs/quarto-html/anchor.min.js"></script>
-<link href="quarto_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="quarto_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="quarto_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="quarto_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="quarto_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="index_files/libs/clipboard/clipboard.min.js"></script>
+<script src="index_files/libs/quarto-html/quarto.js"></script>
+<script src="index_files/libs/quarto-html/popper.min.js"></script>
+<script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="index_files/libs/quarto-html/anchor.min.js"></script>
+<link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="index_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="index_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="index_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="index_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -640,8 +640,8 @@ window.Quarto = {
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>soil<span class="sc">$</span>yield[<span class="fu">which</span>(soil<span class="sc">$</span>yield <span class="sc">&gt;</span> Attainable_yield)] <span class="ot">&lt;-</span> Attainable_yield</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(Limiting_factors<span class="sc">$</span>Rs, soil<span class="sc">$</span>yield,</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Predicted yield (ton/ha)"</span>,</span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">"Actual yield (ton/ha)"</span>, <span class="at">pch=</span><span class="dv">16</span>, <span class="at">col=</span><span class="st">"grey"</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Predicted yield (t/ha)"</span>,</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">"Actual yield (/ha)"</span>, <span class="at">pch=</span><span class="dv">16</span>, <span class="at">col=</span><span class="st">"grey"</span>)</span>
 <span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h=</span>Limiting_factor[[<span class="dv">2</span>]], <span class="at">col=</span><span class="st">"blue"</span>, <span class="at">lty=</span><span class="dv">5</span>, <span class="at">lwd=</span><span class="dv">1</span>)</span>
 <span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">c</span>(<span class="fu">min</span>(Limiting_factors<span class="sc">$</span>Rs),<span class="fu">max</span>(Limiting_factors<span class="sc">$</span>Rs)), </span>
@@ -649,7 +649,16 @@ window.Quarto = {
 <span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a><span class="at">col=</span><span class="st">"red"</span>, <span class="at">lwd=</span><span class="dv">2</span>)</span>
 <span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"bottomleft"</span>,<span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Att yield"</span>, <span class="st">"1:1 line"</span>),</span>
-<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty=</span><span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">1</span>), <span class="at">col=</span><span class="fu">c</span>(<span class="st">"blue"</span>, <span class="st">"red"</span>), <span class="at">lwd=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">cex =</span> <span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty=</span><span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">1</span>), <span class="at">col=</span><span class="fu">c</span>(<span class="st">"blue"</span>, <span class="st">"red"</span>), <span class="at">lwd=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a><span class="co">#---Exp and  Unexp</span></span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="dv">9</span>,<span class="dv">5</span>, <span class="at">pch=</span><span class="dv">16</span>, <span class="at">col=</span><span class="st">"red"</span>)</span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a><span class="fu">arrows</span>(<span class="at">x0=</span><span class="fu">c</span>(<span class="dv">9</span>,<span class="dv">9</span>),<span class="at">y0=</span><span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">9</span>),<span class="at">x1=</span><span class="fu">c</span>(<span class="dv">9</span>,<span class="dv">9</span>),<span class="at">y1=</span><span class="fu">c</span>(<span class="dv">9</span>,Attainable_yield), <span class="at">code =</span> <span class="dv">2</span>, <span class="at">lwd =</span> <span class="fl">1.4</span>, <span class="at">lty =</span> <span class="dv">5</span>)</span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fu">c</span>(<span class="dv">8</span>,<span class="dv">8</span>),<span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">11</span>), <span class="fu">c</span>(<span class="st">"Unexplained Yg"</span>, <span class="st">"Explained Yg"</span>), <span class="at">cex=</span><span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>

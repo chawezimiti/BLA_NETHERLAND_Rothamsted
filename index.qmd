@@ -68,6 +68,9 @@ The boundary line model is highly sensitive to outliers and for this reason, biv
 ```{r, eval=FALSE}
 dat <- data.frame(x=log(soil$P), y=soil$yield) #Input for the bagplot() is a dataframe of x and y.
 
+dat[which(is.na(dat$x)==T),1] <- mean(dat$x,na.rm=T)
+dat[which(is.na(dat$y)==T),2] <- mean(dat$y,na.rm=T)
+
 out <- bagplot(dat,show.whiskers = F)
 
 legend("bottomright", legend = c("Bag","Loop","Depth median", "outlier"), pch = c(15,15,8,3), col = c(adjustcolor( "#7799ff", alpha.f = 0.7), "#aaccff","red","red")) 
@@ -122,7 +125,7 @@ Note
 ::: {#my-collapse .collapse .mt-3}
 1.  All boundary fitting methods require initial starting values for the parameters of a proposed model. The initial starting values are optimized to find the parameters of the proposed model as in the `optim()` function in base `R`.
 
-2.  Note that for the startValues() function to work effectively, the appearance zoom in the global options of R and your computer display zoom should be equal i.e.both should be at 100%.
+2.  Note that some computers, for the `startValues()` function to work effectively, the appearance zoom in the global options of `R` and your computer display zoom should be equal i.e.both should be at 100%.
 :::
 :::
 
@@ -143,7 +146,7 @@ Fill the suggested initial starting values in a vector.
 
 start <- c(4,3,14,104,-22) # start values is a vector of five consists of intercept, slope, plateau yield, intercept2 and slope2. 
 
-model1 <- bolides(x=x,y=x, start = start,model = "trapezium",
+model1 <- bolides(x=x,y=y, start = start,model = "trapezium",
                 xlab=expression("Phosphorus/ln(mg L"^-1*")"), 
                 ylab=expression("Yield/ t ha"^-1), pch=16, 
                 col="grey", bp_col="grey")
@@ -184,11 +187,9 @@ head(maize)
 
 ```
 
-1.  Fit the boundary line model for Maize yield and any soil property of your choice using the `bolides()` function assigning it mod_1
+1.  Fit the boundary line model for Maize yield as a function of soil N using the `bolides()` function assigning it mod_1
 :::
 :::
-
-
 
 ### 5.2 Binning method
 
@@ -199,7 +200,7 @@ The binning method involves splitting the data into several sections along the x
 ```
 
 ```{r,fig.align='center', fig.dim=c(4,4), eval=FALSE}
-bins <- c(1.61,4.74,0.313) 
+bins <- c(min(x), max(x), (max(x)-min(x))/10)
 
 blbin(x=x, y=y, bins=bins, model = "explore", tau=0.99, pch=16, col="grey")
 ```
@@ -223,7 +224,6 @@ model2 <- blbin(x=x,y=y, bins, start = start, model = "trapezium",
 model2
 ```
 
-
 ::: card
 <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
 
@@ -241,11 +241,9 @@ head(maize)
 
 ```
 
-1.  Fit the boundary line model for Maize yield and any soil property of your choice using the `blbin()` function assigning it mod_2.
+1.  Fit the boundary line model for Maize yield as a function of soil N using the `blbin()` function assigning it mod_2.
 :::
 :::
-
-
 
 ### 5.3 Quantile regression method
 
@@ -296,14 +294,11 @@ Exercise 3
 </button>
 
 ::: {#my-collapse .collapse .mt-3}
-1.  Use the `maize` dataset to fit the boundary line model for maize yield and any soil property of your choice using the `blqr()` function assigning it mod_3. Use `tau` = 0.99 and `tau` = 0.95, see the implication.
+1.  Use the `maize` dataset to fit the boundary line model for maize yield as function of soil N using the `blqr()` function assigning it mod_3. Use `tau` = 0.99 and `tau` = 0.95, see the implication.
 
 2.  Predict the maximum possible maize yields for any 4 points in the dataset.
 :::
 :::
-
-
-
 
 ### 5.4 Censored bivariate normal model
 
@@ -342,7 +337,7 @@ start1 <- c(4.3,3.4,13.8,32.8,-4.9,mean(x),mean(y),sd(x),sd(y),cor(x,y))
 We determine multiple start values to avoid model sticking to a local optima solution.
 
 ```{r, eval = FALSE}
-start2<-list(
+start2 <- list(
   c(4.3,3.4,13.8,32.8,-4.9,mean(x),mean(y),sd(x),sd(y),cor(x,y)),
   c(2.5,4.1,13.42,32,-4.8,mean(x),mean(y),sd(x),sd(y),cor(x,y)),
   c(3.5,3.7,13.35,47.7,-8.4,mean(x),mean(y),sd(x),sd(y),cor(x,y)),
@@ -356,7 +351,7 @@ start2<-list(
 The standard deviation of measurement error (`sigh`) is a fixed parameter for `cbvn()`. As we do not have a direct measure of `sigh`, it is determined by log-likelihood profiling. In log-likelihood profiling, the log-likelihoods of several suggested values of `sigh` are determined given the data distribution and the suggested model. The `sigh` value with the largest log-likelihood is selected. This is achieved using the `ble_profile()` function.
 
 ```{r, eval = FALSE}
-sigh<-c(0.3,0.4,0.5,0.6,0.7,0.8,0.9,1) # we suggest sigh values ranging from 0.3 to 1 t/ha
+sigh <- c(0.3,0.4,0.5,0.6,0.7,0.8,0.9,1) # we suggest sigh values ranging from 0.3 to 1 t/ha
 
 ```
 
@@ -390,7 +385,7 @@ Merror<- unlist(lapply(profile, function(sublist) {
   sapply(sublist, function(x) x[["Merror"]])
 }))
 
-# The sigh with the smallest negative log-likelihood 
+# The sigh with the maximum log-likelihood value
 
 Merror[which(log_likelihood==max(log_likelihood, na.rm = T))]# profile maximized  at 0.4 t/ha
 
@@ -479,39 +474,69 @@ Exercise 4
 </button>
 
 ::: {#my-collapse .collapse .mt-3}
-1.  Determine the boundary line for soil pH from the `Soil` dataset (within the `BLA`) and assign it mod_5. Use the `sigh = 0.4`. There is no need to test for presence of boundary as it has already been established earlier using Soil P.
+1.  Use the `maize` dataset to fit the boundary line model for maize yield as function of soil N using the `cbvn()` function assigning it mod_4.
+
+2.  Predict the maximum possible maize yields for any 4 points in the dataset.
+:::
 :::
 
-<!-- Unlock input + button -->
+### 5.4.4 Run the code for soil pH below
 
-::: mt-3
-<label for="keyInput">Enter key to view answer:</label> <input type="text" id="keyInput" class="form-control" placeholder="Enter keyword"> <button class="btn btn-success mt-2" onclick="checkKey()">Submit</button>
-:::
+::: card
+<button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
 
-<!-- Hidden answer section -->
-
-::: {#answerContent .collapse .mt-3}
-```{r, fig.align='center', fig.dim=c(4,4), eval=FALSE}
-code_here
-```
-
-<!-- Hide button -->
-
-<button class="btn btn-outline-secondary mt-2" onclick="hideAnswer()">
-
-Hide Answer
+Boundary line model for soil pH from the `Soil` dataset
 
 </button>
-:::
 
-<!-- JavaScript -->
+::: {#my-collapse .collapse .mt-3}
+1.  Determine the boundary line for soil pH from the `Soil` dataset (within the `BLA`) and assign it model5. Use the `sigh = 0.4`. There is no need to test for presence of boundary as it has already been established earlier using Soil P.
 
-```{=html}
-<script> function checkKey() { const input = document.getElementById('keyInput').value.trim().toLowerCase(); const answer = document.getElementById('answerContent'); if (input === 'model') { answer.classList.add('show'); } else { alert('Incorrect key. Please try again.'); } } function hideAnswer() { const answer = document.getElementById('answerContent'); answer.classList.remove('show'); } </script>
+```{r, fig.align='center', fig.dim=c(4,4), eval=FALSE}
+
+# 1. Test for Normality-------------------------------------------------------------------
+
+summastat(soil$pH) 
+
+summastat(log(soil$pH)) # transformation doesn't improve results
+
+
+# 2. Identify and remove outliers --------------------------------------------------------
+
+dat2 <- data.frame(x=soil$pH, y=soil$yield) # Input for the bagplot() 
+
+dat2[which(is.na(dat2$x) == T),1] <- mean(dat2$x, na.rm=T) #replace missing values with mean 
+dat2[which(is.na(dat2$y) == T),2] <- mean(dat2$y, na.rm=T)
+
+out2 <- bagplot(dat2,show.whiskers = F)
+
+vals2 <- rbind(out2$pxy.bag, out2$pxy.outer) 
+
+# 3. Select boundary model and initial starting values------------------------------------
+
+plot(vals2, pch=16, col="grey", xlab="soil P", ylab = "Yield (t/ha)")
+
+startValues("lp")
+
+X <- vals2[,1]
+Y <- vals2[,2]
+
+start2 <- c(-6.07,3.05,13.53,mean(X),mean(Y),sd(X),sd(Y),cor(X,Y))
+
+# 4. Fit the boundary model-------------------------------------------------------------
+
+model5 <- cbvn(data=vals2, start = start2, sigh=0.4, model = "lp",
+               optim.method = "Nelder-Mead",
+               xlab=expression("Soil pH"),
+               ylab=expression("Yield/ t ha"^-1), pch=16, col="grey")
+
+model5
+
+
+
 ```
 :::
-
-
+:::
 
 ## 6. Post-hoc analysis
 
@@ -527,7 +552,6 @@ P_data[which(is.na(P_data)==T)]<-mean(P_data,na.rm=T) # replace missing values w
 P<-predictBL(model4,P_data) # boundary yield for soil P
 ```
 
-
 ::: card
 <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
 
@@ -536,21 +560,27 @@ Exercise 5
 </button>
 
 ::: {#my-collapse .collapse .mt-3}
-1.  Use the results from your mod_4 for soil pH to predict the largest yields for each value of soil pH in the `soil` dataset. Replace the missing pH values with the mean and assign the predicted yields as pH.
+1.  Use the results from your model5 for soil pH to predict the largest yields for each value of soil pH in the `soil` dataset. Replace the missing pH values with the mean and assign the predicted yields as pH.
 :::
 :::
-
 
 ### 6.2 Determining the most-limiting factor
 
 One of the key advantages of boundary line analysis is its ability to identify the most limiting factor among multiple variables by comparing their boundary lines. From the predicted boundary yield using model4 and model5 for soil P and soil pH respectively, we can determine which factor, soil P or soil pH, is most-limiting.
 
 ```{r, eval = FALSE}
-Limiting_factor <- limfactor(P, pH) 
+
+output <- limfactor(P, pH) 
 
 # This produces a list of length 2, containing a vector of most-limiting factor for each point in dataset and the maximum predicted response in the dataset.
 
-Limiting_factors <- Limiting_factor[[1]]
+# a) Attainable yield
+
+Attainable_yield <- output[[2]]
+
+# b) Identified most limiting factor
+
+Limiting_factors <- output[[1]]
 
 head(Limiting_factors)
 
@@ -565,6 +595,35 @@ head(Limiting_factors)
 axis(side = 1, at = seq(0, 4, by = 1), labels = FALSE, lwd = 1, col.ticks = "white")  
 axis(side = 2, lwd = 1)
 }
+
+```
+
+### 6.3 Explained and Unexplained Yield gap
+
+```{r, eval=FALSE}
+
+soil$yield[which(soil$yield > Attainable_yield)] <- Attainable_yield
+
+plot(Limiting_factors$Rs, soil$yield,
+     xlab="Predicted yield (t/ha)",
+     ylab="Actual yield (/ha)", pch=16, col="grey")
+
+abline(h=Limiting_factor[[2]], col="blue", lty=5, lwd=1)
+lines(c(min(Limiting_factors$Rs),max(Limiting_factors$Rs)), 
+c(min(Limiting_factors$Rs),max(Limiting_factors$Rs)), 
+col="red", lwd=2)
+
+legend("bottomleft",legend = c("Att yield", "1:1 line"),
+       lty=c(5,1), col=c("blue", "red"), lwd=c(1, 2), cex = 0.8)
+
+
+#---Exp and  Unexp
+
+points(9,5, pch=16, col="red")
+
+arrows(x0=c(9,9),y0=c(5,9),x1=c(9,9),y1=c(9,Attainable_yield), code = 2, lwd = 1.4, lty = 5)
+
+text(c(8,8),c(6,11), c("Unexplained Yg", "Explained Yg"), cex=0.8)
 
 ```
 
@@ -618,11 +677,13 @@ Exercise 6
 </button>
 
 ::: {#my-collapse .collapse .mt-3}
-1.  From the `maize` data, choose one variable and fit the boundary line model using a custom model of your choice.
+1.  From the `maize` fit the boundary line model for soil N using a custom model of your choice.
 :::
 :::
 
 ## DAY 2: BOUNDARY LINE EXERCISE SESSION
+
+## 1. Yield gap analysis using the maize dataset
 
 The link below provides access to a dataset called `maize`, which contains maize yields along with various soil properties gathered from farms in Ethiopia:
 
@@ -631,3 +692,7 @@ https://raw.githubusercontent.com/chawezimiti/BLA_NETHERLAND_Rothamsted/refs/hea
 1.  Identify the most-limiting factor at each point in the data set and produce a plot showing the proportions of each limiting factor.
 
 2.  Identify the critical values for each factor in the dataset.
+
+## 2. Yield gap analysis using own data
+
+If you have any other data which you would like to conduct yield gap analysis.
