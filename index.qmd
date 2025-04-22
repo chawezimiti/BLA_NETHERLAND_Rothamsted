@@ -7,6 +7,8 @@ author: Chawezi Miti
 
 ## DAY 1: INTRODUCTION TO BOUNDARY LINE ANALYSIS
 
+Download the slides [here](https://github.com/chawezimiti/BLA_NETHERLAND_WAGENINGEN/raw/0e7c77f578716d842fadcea6ead16996fcdb4481/Wageningen_BLA.pdf)
+
 ## 1. Introduction
 
 This script gives illustration of fitting boundary line models to data and carrying out post-hoc analysis.
