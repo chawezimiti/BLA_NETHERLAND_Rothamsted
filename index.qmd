@@ -698,3 +698,24 @@ https://raw.githubusercontent.com/chawezimiti/BLA_NETHERLAND_Rothamsted/refs/hea
 ## 2. Yield gap analysis using own data
 
 If you have any other data which you would like to conduct yield gap analysis.
+
+
+## Useful liks
+
+1. Solutions can be found [here](https://raw.githubusercontent.com/chawezimiti/BLA_NETHERLAND_WAGENINGEN/refs/heads/main/exercise_solutions.R).
+
+2. BLA source code can be found at [here](https://github.com/chawezimiti/BLA)
+
+
+3. Review paper on boundary line analysis can be found [here](https://www.sciencedirect.com/science/article/pii/S0378429024001187#:~:text=Yield%20gap%20estimation%20using%20different,total%20yield%20gap%20(Yg).)
+
+
+
+
+
+
+
+
+
+
+
