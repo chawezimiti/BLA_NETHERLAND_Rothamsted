@@ -172,6 +172,7 @@ Max_yield <- predictBL(model1, P_log) # the argument inputs are the boundary lin
 Max_yield
 ```
 
+
 ::: card
 <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
 
@@ -182,16 +183,22 @@ Exercise 1
 ::: {#my-collapse .collapse .mt-3}
 A link to dataset `maize` that contains maize yields and various soil properties is provided below. You can read it into your `R` session using the following code.
 
+
 ```{r, eval=FALSE}
 maize <- read.csv("https://raw.githubusercontent.com/chawezimiti/BLA_NETHERLAND_Rothamsted/refs/heads/main/maize_data.csv")
+
+#maize <- read.csv("maize_data.csv")
 
 head(maize)
 
 ```
 
+
 1.  Fit the boundary line model for Maize yield as a function of soil N using the `bolides()` function assigning it mod_1
 :::
 :::
+
+
 
 ### 5.2 Binning method
 
@@ -226,6 +233,7 @@ model2 <- blbin(x=x,y=y, bins, start = start, model = "trapezium",
 model2
 ```
 
+
 ::: card
 <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
 
@@ -239,6 +247,8 @@ A link to dataset `maize` that contains Maize yields and various soil properties
 ```{r, eval=FALSE}
 maize <- read.csv("https://raw.githubusercontent.com/chawezimiti/BLA_NETHERLAND_Rothamsted/refs/heads/main/maize_data.csv")
 
+#maize <- read.csv("maize_data.csv")
+
 head(maize)
 
 ```
@@ -246,6 +256,8 @@ head(maize)
 1.  Fit the boundary line model for Maize yield as a function of soil N using the `blbin()` function assigning it mod_2.
 :::
 :::
+
+
 
 ### 5.3 Quantile regression method
 
@@ -301,6 +313,8 @@ Exercise 3
 2.  Predict the maximum possible maize yields for any 4 points in the dataset.
 :::
 :::
+
+
 
 ### 5.4 Censored bivariate normal model
 
@@ -468,6 +482,7 @@ model4 <- models[[which.min(unlist(lapply(X=models,FUN = function(a){
 model4
 ```
 
+
 ::: card
 <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
 
@@ -481,6 +496,7 @@ Exercise 4
 2.  Predict the maximum possible maize yields for any 4 points in the dataset.
 :::
 :::
+
 
 ### 5.4.4 Run the code for soil pH below
 
@@ -565,6 +581,7 @@ Exercise 5
 1.  Use the results from your model5 for soil pH to predict the largest yields for each value of soil pH in the `soil` dataset. Replace the missing pH values with the mean and assign the predicted yields as pH.
 :::
 :::
+
 
 ### 6.2 Determining the most-limiting factor
 
@@ -674,7 +691,7 @@ The parameters of the models are shown in the results. A prediction of the bound
 ::: card
 <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#my-collapse">
 
-Exercise 6
+Exercise 6a
 
 </button>
 
@@ -682,6 +699,8 @@ Exercise 6
 1.  From the `maize` fit the boundary line model for soil N using a custom model of your choice.
 :::
 :::
+
+
 
 ## DAY 2: BOUNDARY LINE EXERCISE SESSION
 
@@ -699,23 +718,10 @@ https://raw.githubusercontent.com/chawezimiti/BLA_NETHERLAND_Rothamsted/refs/hea
 
 If you have any other data which you would like to conduct yield gap analysis.
 
-
 ## Useful liks
 
-1. Solutions can be found [here](https://raw.githubusercontent.com/chawezimiti/BLA_NETHERLAND_WAGENINGEN/refs/heads/main/exercise_solutions.R).
+1.  Solutions can be found [here](https://raw.githubusercontent.com/chawezimiti/BLA_NETHERLAND_WAGENINGEN/refs/heads/main/exercise_solutions.R).
 
-2. BLA source code can be found at [here](https://github.com/chawezimiti/BLA)
+2.  BLA source code can be found at [here](https://github.com/chawezimiti/BLA)
 
-
-3. Review paper on boundary line analysis can be found [here](https://www.sciencedirect.com/science/article/pii/S0378429024001187#:~:text=Yield%20gap%20estimation%20using%20different,total%20yield%20gap%20(Yg).)
-
-
-
-
-
-
-
-
-
-
-
+3.  Review paper on boundary line analysis can be found [here](https://www.sciencedirect.com/science/article/pii/S0378429024001187#:~:text=Yield%20gap%20estimation%20using%20different,total%20yield%20gap%20(Yg).)
